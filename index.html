@@ -8,20 +8,11 @@
 :root{--bg:#1A1B26;--surface:#24283B;--surface2:#2a2f45;--bg2:#16161E;--bg3:#1f2335;--border:#3b4170;--text:#c0caf5;--text-dim:#565f89;--muted:#565f89;--accent:#7AA2F7;--accent2:#bb9af7;--good:#9ECE6A;--warn:#E0AF68;--bad:#F7768E;--gradient-1:#7AA2F7;--gradient-2:#bb9af7;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
-/* 粒子背景 — loop-go 同款 */
+/* 粒子背景 */
 #particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
 .container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2rem}
-/* Hero — 径向渐变 */
-.gallery-header{
-  position:relative;overflow:hidden;
-  padding:3rem 2.5rem;
-  background:var(--bg);
-  background-image:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(122,162,247,0.18) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 70% 80%, rgba(187,154,247,0.12) 0%, transparent 60%);
-  border:1px solid var(--border);border-radius:20px;margin-bottom:2rem;
-  animation:header-in 0.7s cubic-bezier(0.22,1,0.36,1)
-}
+/* Hero */
+.gallery-header{position:relative;overflow:hidden;padding:3rem 2.5rem;background:var(--bg);background-image:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(122,162,247,0.18) 0%, transparent 70%),radial-gradient(ellipse 60% 40% at 70% 80%, rgba(187,154,247,0.12) 0%, transparent 60%);border:1px solid var(--border);border-radius:20px;margin-bottom:2rem;animation:header-in 0.7s cubic-bezier(0.22,1,0.36,1)}
 .gallery-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gradient-1),var(--gradient-2),var(--good));border-radius:3px 3px 0 0}
 .gallery-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
 @keyframes header-in{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
@@ -31,7 +22,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .header-meta{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem}
 .stat-badge{display:inline-flex;align-items:center;gap:0.35rem;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:0.25rem 0.75rem;font-size:0.72rem;color:var(--muted)}
 .stat-badge strong{color:var(--accent)}
-/* 卡片网格 */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
 @keyframes card-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .agent-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--c,#7AA2F7);border-radius:14px;padding:1.2rem;cursor:pointer;text-decoration:none;color:inherit;display:block;transition:box-shadow 0.25s,transform 0.25s,border-color 0.25s;opacity:0;animation:card-in 0.5s cubic-bezier(0.22,1,0.36,1) forwards}
@@ -616,7 +606,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   window.addEventListener('resize',resize);
   function draw(){
     ctx.clearRect(0,0,W,H);
-    ps.forEach(p=>{
+    ps.forEach(function(p){
       ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
       ctx.fillStyle=p.color;p.alpha*=0.998;
       ctx.globalAlpha=p.alpha;ctx.fill();ctx.globalAlpha=1;
@@ -632,9 +622,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 (function(){
   const cards=document.querySelectorAll('.agent-card');
   if(document.getElementById('card-count'))document.getElementById('card-count').textContent=cards.length;
-  const observer=new IntersectionObserver((entries)=>{entries.forEach((e)=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.05});
-  cards.forEach((card,idx)=>{card.style.animationDelay=(idx*0.04)+'s';observer.observe(card);});
-  setTimeout(()=>{document.querySelectorAll('.agent-card:not(.visible)').forEach(c=>c.classList.add('visible'));},1800);
+  const observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.05});
+  cards.forEach(function(card,idx){card.style.animationDelay=(idx*0.04)+'s';observer.observe(card);});
+  setTimeout(function(){document.querySelectorAll('.agent-card:not(.visible)').forEach(function(c){c.classList.add('visible');});},1800);
 })();
 </script>
 </body>
