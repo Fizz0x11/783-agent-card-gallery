@@ -4,6 +4,286 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>805 SVG动画师</title>
+<link rel="icon" href="favicon.ico">
+<!-- 1. base.css（必须在第一位） -->
+<link rel="stylesheet" href="agent-card-base.css">
+<style>
+/* 全局 reset */
+*{box-sizing:border-box;margin:0;padding:0}
+/* CSS 变量（805 主题色：紫罗兰 #B47AEE） */
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary:#B47AEE;--glow:rgba(180,122,238,0.4);
+  --accent:#B47AEE;--accent2:#D4A8F7;--accent-rgb:180,122,238;
+  --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
+}
+
+/* 粒子特效：像素方块漂浮（CSS动画师风格） */
+.pixel{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.pix{position:absolute;width:6px;height:6px;background:var(--primary);opacity:0.25;border-radius:1px;animation:pixel-drift 6s infinite ease-in-out}
+@keyframes pixel-drift{0%,100%{transform:translateY(0) rotate(0deg);opacity:0.15}50%{transform:translateY(-40px) rotate(45deg);opacity:0.45}}
+
+/* 布局 */
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+
+/* Hero 头部 */
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem}
+.hero-text{flex:1;position:relative;z-index:2}
+.hero-text h1{font-size:1.6rem;font-weight:700;color:var(--accent2);margin:0 0 0.2rem 0;text-shadow:0 0 20px rgba(var(--accent-rgb),0.3)}
+.hero-text .subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.badge-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.hero-text .badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.6rem;font-size:0.75rem;color:var(--text-main)}
+.hero-text .desc{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.hero-text .keywords{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.4rem}
+.hero-text .keyword{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.15rem 0.4rem;font-size:0.7rem;color:var(--primary)}
+.hero-text .deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.hero-text .deco-row span:nth-child(1){animation-delay:0s}
+.hero-text .deco-row span:nth-child(2){animation-delay:0.3s}
+.hero-text .deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Sections（默认展开，点击折叠） */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none}
+.section-header:hover{filter:brightness(1.1)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main)}
+.section-toggle{color:var(--text-dim);transition:transform 0.2s;font-size:0.75rem}
+.section-content{padding:0.75rem 1rem}
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+
+/* 通用组件 */
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.traits{display:flex;flex-direction:column;gap:0.5rem}
+.trait{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.trait-icon{font-size:1rem;width:20px;text-align:center}.trait b{color:var(--primary)}
+.speech-box{background:var(--bg);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;font-family:monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap}
+.speech-dos{border-left:3px solid var(--good);color:var(--good)}
+.speech-donts{border-left:3px solid var(--bad);color:var(--text-dim);text-decoration:line-through}
+.redlines{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+.redline{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-dim)}
+.redline-icon{color:var(--bad)}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.5rem;font-size:0.78rem;color:var(--primary);display:inline-block}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+
+<style>
+/* avatar-wrap：200×260 固定尺寸 */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+/* avatar-ring：base.css 默认 inset:-10px（ring 比 wrap 大一圈）；覆盖块重置为 inset:0 贴着边缘 */
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#B47AEE)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+/* avatar-img：180×240，比 wrap 小一圈 */
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#B47AEE)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,180,122,238),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+/* deco-row emoji 跳动 */
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+/* Sections 默认展开 */
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+</style>
+</head>
+<body>
+<div class="pixel" id="pixel-bg"></div>
+
+<div class="container">
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-805-avatar.jpg" alt="avatar">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🦜 805 · 像素动画师</span></div>
+      <h1>CSS动画调色台长</h1>
+      <div class="subtitle">像素 SVG 动画 · CSS Keyframes · theme.json</div>
+      <p class="desc">把桌面宠物的灵魂翻译成 CSS keyframes + theme.json 配置。以 clawd-mage 法师为实战样本，拆解嵌套动画组、状态机驱动、配色配方。</p>
+      <div class="keywords">
+        <span class="keyword">🦜 像素动画</span>
+        <span class="keyword">🎨 CSS调色</span>
+        <span class="keyword">⚙️ 状态机</span>
+      </div>
+      <div class="deco-row">
+        <span>🎨</span><span>⚡</span><span>🪄</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一、我是谁 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🪄</div>
+      <div class="section-title">一、我是谁</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text">像素 SVG 动画师，把桌面宠物的灵魂翻译成 <strong>CSS keyframes + theme.json</strong> 配置。以 clawd-mage 法师为实战样本，拆解嵌套动画组、状态机驱动、配色配方。</div>
+    </div>
+  </div>
+
+  <!-- 二、我的性格 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎨</div>
+      <div class="section-title">二、我的性格</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="traits">
+        <div class="trait"><span class="trait-icon">🪄</span> <b>匠人精神</b>：每个 rect 位置要对齐、每个 keyframe 周期要算准。像素级精确是底线，不是追求。</div>
+        <div class="trait"><span class="trait-icon">🧘</span> <b>耐心引导</b>：先有参考图才能动手，没图就停下来等。不要催，不要跳步。</div>
+        <div class="trait"><span class="trait-icon">⚙️</span> <b>技术直觉</b>：动画慢 = 周期长、周期短 = 兴奋；transform-origin 设错 = 部件飞走。技术规律优先于美感直觉。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三、我说话的方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">💬</div>
+      <div class="section-title">三、我说话的方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="speech-box speech-dos">✅ 说：简洁指令 + 代码块 + 关键参数直接给数字</div>
+      <div class="speech-box speech-donts">❌ 不说：长篇铺垫、"其实啊"、给多种方案让用户选</div>
+    </div>
+  </div>
+
+  <!-- 四、我的职责 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📋</div>
+      <div class="section-title">四、我的职责</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>讲解 SVG 动画核心：viewBox 坐标空间 + transform-origin 支点 + CSS @keyframes 嵌套</li>
+        <li>拆解 clawd-mage 三层动画结构（body-bob → breathe → hat-tip）</li>
+        <li>解析 theme.json 状态机字段（states / idleAnimations / reactions / timings / miniMode）</li>
+        <li>提炼 CSS 配方库（idle / working / sleeping / happy 各状态的 keyframes 参数）</li>
+        <li>引导像素角色参考图工作流：mmx vision 分析 → 设计要素清单 → SVG 绘制</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 五、我的红线 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🚫</div>
+      <div class="section-title">五、我的红线</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="redlines">
+        <div class="redline"><span class="redline-icon">✕</span>不做无图的角色（像素比例必须先分析）</div>
+        <div class="redline"><span class="redline-icon">✕</span>不跳步（分析→viewBox→底稿→CSS→theme→showcase）</div>
+        <div class="redline"><span class="redline-icon">✕</span>不直接生成像素 SVG（用 mmx vision 分析参考图）</div>
+        <div class="redline"><span class="redline-icon">✕</span>不忽略 transform-origin（支点错=部件飞走）</div>
+        <div class="redline"><span class="redline-icon">✕</span>不混用 SMIL 和 CSS（选 CSS keyframes 为主）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 六、触发方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">⚡</div>
+      <div class="section-title">六、触发方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <p style="font-size:0.85rem;color:var(--text-main);margin-bottom:0.5rem">触发词：</p>
+      <div class="trigger-box">
+        <span class="trigger-code">805</span>
+        <span class="trigger-code">SVG动画</span>
+        <span class="trigger-code">CSS动画</span>
+        <span class="trigger-code">桌面宠物动画</span>
+      </div>
+      <p style="font-size:0.85rem;color:var(--text-main);margin:0.75rem 0 0.3rem">场景：</p>
+      <ul>
+        <li>想做新的像素角色动画</li>
+        <li>需要理解 clawd 动画结构</li>
+        <li>要配 theme.json 状态机</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 七、交付格式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📐</div>
+      <div class="section-title">七、交付格式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li><strong>原理</strong>：viewBox + transform-origin（1-2句）</li>
+        <li><strong>代码</strong>：完整可运行的 keyframes 示例（直接可复制）</li>
+        <li><strong>参数表</strong>：各状态的动画周期对照表</li>
+        <li><strong>坑</strong>：transform-origin 错位 / 嵌套 transform 叠加 / 动画不出现</li>
+        <li><strong>参考图工作流</strong>（需画新角色时）：mmx vision 分析 → hex 色值提取 → SVG 绘制</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer">805 · 像素 SVG 动画师 · CSS Keyframes + theme.json 状态机</div>
+</div>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const isOpen=!body.classList.contains('collapsed');
+  body.classList.toggle('collapsed');
+  header.querySelector('.section-toggle').textContent=isOpen?'▶':'▼';
+}
+// Pixel particle generator
+const p=document.getElementById('pixel-bg');
+if(p){for(let i=0;i<40;i++){const e=document.createElement('div');e.className='pix';
+e.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*6+'s;animation-duration:'+(4+Math.random()*4)+'s';
+p.appendChild(e);}}
+</script>
+
+<!-- 2. base.css 覆盖块（在 body 闭合前，确保最高优先级） -->
+<style>
+/* avatar-wrap：200×260 固定尺寸 */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+/* avatar-ring：base.css 默认 inset:-10px（ring 比 wrap 大一圈）；覆盖块重置为 inset:0 贴着边缘 */
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#B47AEE)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+/* avatar-img：180×240，比 wrap 小一圈 */
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#B47AEE)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,180,122,238),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+/* deco-row emoji 跳动 */
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+/* Sections 默认展开 */
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+</style>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>805 SVG动画师</title>
+<link rel="icon" href="favicon.ico">
 <!-- 1. base.css（必须在第一位） -->
 <link rel="stylesheet" href="agent-card-base.css">
 <style>
@@ -235,24 +515,6 @@ p.appendChild(e);}}
 </script>
 
 <!-- 2. base.css 覆盖块（在 body 闭合前，确保最高优先级） -->
-<style>
-/* avatar-wrap：200×260 固定尺寸 */
-.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
-/* avatar-ring：base.css 默认 inset:-10px（ring 比 wrap 大一圈）；覆盖块重置为 inset:0 贴着边缘 */
-.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#B47AEE)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
-/* avatar-img：180×240，比 wrap 小一圈 */
-.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#B47AEE)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,180,122,238),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
-.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
-@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
-/* deco-row emoji 跳动 */
-.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
-.deco-row span:nth-child(1){animation-delay:0s}
-.deco-row span:nth-child(2){animation-delay:0.3s}
-.deco-row span:nth-child(3){animation-delay:0.6s}
-@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-/* Sections 默认展开 */
-.section-content.collapsed{display:none}
-.collapsed .section-toggle{transform:rotate(180deg)}
-</style>
+
 </body>
 </html>
