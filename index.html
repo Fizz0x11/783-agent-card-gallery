@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fizz Agent Cards · 角色卡索引</title>
+<style>
+:root{--bg:#1A1B26;--surface:#24283B;--surface2:#2a2f45;--bg2:#16161E;--bg3:#1f2335;--border:#3b4170;--text:#c0caf5;--text-dim:#565f89;--muted:#565f89;--accent:#7AA2F7;--accent2:#bb9af7;--good:#9ECE6A;--warn:#E0AF68;--bad:#F7768E;--gradient-1:#7AA2F7;--gradient-2:#bb9af7;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+/* 粒子背景 — loop-go 同款 */
+#particles-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:2rem}
+/* Hero — 径向渐变 */
+.gallery-header{
+  position:relative;overflow:hidden;
+  padding:3rem 2.5rem;
+  background:var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(122,162,247,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 70% 80%, rgba(187,154,247,0.12) 0%, transparent 60%);
+  border:1px solid var(--border);border-radius:20px;margin-bottom:2rem;
+  animation:header-in 0.7s cubic-bezier(0.22,1,0.36,1)
+}
+.gallery-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gradient-1),var(--gradient-2),var(--good));border-radius:3px 3px 0 0}
+.gallery-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+@keyframes header-in{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.hero-badge{display:inline-block;padding:0.3rem 1rem;border:1px solid var(--accent);border-radius:2rem;color:var(--accent);font-size:0.72rem;letter-spacing:0.1em;margin-bottom:1.2rem;background:rgba(122,162,247,0.08)}
+.gallery-header h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;background:linear-gradient(135deg,var(--gradient-1),var(--gradient-2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.6rem;letter-spacing:-0.02em}
+.subtitle{font-size:0.9rem;color:var(--muted);margin-bottom:1.2rem;line-height:1.6}
+.header-meta{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.8rem}
+.stat-badge{display:inline-flex;align-items:center;gap:0.35rem;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:0.25rem 0.75rem;font-size:0.72rem;color:var(--muted)}
+.stat-badge strong{color:var(--accent)}
+/* 卡片网格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+@keyframes card-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.agent-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--c,#7AA2F7);border-radius:14px;padding:1.2rem;cursor:pointer;text-decoration:none;color:inherit;display:block;transition:box-shadow 0.25s,transform 0.25s,border-color 0.25s;opacity:0;animation:card-in 0.5s cubic-bezier(0.22,1,0.36,1) forwards}
+.agent-card.visible{opacity:1;transform:none;animation:none}
+.agent-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.4),0 0 0 1px var(--c,var(--accent))33}
+.agent-card-inner{display:flex;gap:1rem;align-items:flex-start}
+.card-avatar-wrap{flex-shrink:0}
+.card-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--c,#7AA2F7);box-shadow:0 0 12px var(--c,var(--accent))40}
+.card-body{flex:1;min-width:0}
+.card-title-row{display:flex;align-items:baseline;gap:0.5rem;margin-bottom:0.2rem}
+.card-num{font-size:0.82rem;font-weight:700}
+.card-name{font-size:0.95rem;font-weight:600}
+.card-role{font-size:0.72rem;color:var(--text-dim);margin-bottom:0.4rem}
+.card-effect-badge{display:inline-block;border:1px solid;border-radius:20px;padding:0.1rem 0.5rem;font-size:0.65rem;margin-bottom:0.5rem}
+.card-desc{font-size:0.78rem;color:var(--text-dim);line-height:1.5}
+.card-desc strong{color:var(--text)}
+.footer{text-align:center;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+.footer a{color:var(--accent);text-decoration:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+@media(max-width:600px){body{padding:1rem}.gallery-header{padding:1.8rem 1.5rem}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="particles-canvas"></div>
+<div class="container">
+  <div class="gallery-header">
+    <div class="hero-badge">🤖 HERMES SKILL · AGENT CARD GALLERY</div>
+    <h1>🦉 Fizz Agent Cards</h1>
+    <div class="subtitle">角色卡索引 · 共享库唯一真实来源 · 持续更新</div>
+    <div class="header-meta">
+      <span class="stat-badge">📇 <strong id="card-count">33</strong> 张角色卡</span>
+      <span class="stat-badge">🎨 <strong>17</strong> 种专属动效</span>
+      <span class="stat-badge">⚡ loop-go 配色体系</span>
+    </div>
+  </div>
+  <div class="grid">
+    <a class="agent-card" href="agent-61.html" target="_blank" style="--c:#D97706">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-61-avatar.jpg" alt="61" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#D97706">61</span>
+            <span class="card-name">fizz-vbs</span>
+          </div>
+          <div class="card-role" style="color:#D9770680">🦡 · #D97706</div>
+          <div class="card-effect-badge" style="border-color:#D9770640;color:#D97706">💠 金色脉冲</div>
+          <div class="card-desc"><strong>职责：</strong>Windows VBS 启动脚本快速生成专家</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-100.html" target="_blank" style="--c:#7AA2F7">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-100-avatar.jpg" alt="100" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#7AA2F7">100</span>
+            <span class="card-name">记事员</span>
+          </div>
+          <div class="card-role" style="color:#7AA2F780">#7AA2F7</div>
+          <div class="card-effect-badge" style="border-color:#7AA2F740;color:#7AA2F7">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>CE 开始时 → 在记事本里新建 session 条目；执行中 → 实时追加四类记录：</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-240.html" target="_blank" style="--c:#6366F1">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-240-avatar.jpg" alt="240" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#6366F1">240</span>
+            <span class="card-name">飞书架构图助手</span>
+          </div>
+          <div class="card-role" style="color:#6366F180">🦉 · #6366F1</div>
+          <div class="card-effect-badge" style="border-color:#6366F140;color:#6366F1">🏗️ 架构可视化</div>
+          <div class="card-desc"><strong>职责：</strong>根据文字描述生成飞书文档架构图（白板/Lark Drawing）；将现有系统设计文档转译为可视化图表</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-248.html" target="_blank" style="--c:#14B8A6">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-248-avatar.jpg" alt="248" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#14B8A6">248</span>
+            <span class="card-name">Get笔记管理员</span>
+          </div>
+          <div class="card-role" style="color:#14B8A680">🦉 · #14B8A6</div>
+          <div class="card-effect-badge" style="border-color:#14B8A640;color:#14B8A6">📝 知识整理</div>
+          <div class="card-desc"><strong>职责：</strong>📝 笔记 CRUD：创建笔记、读取列表、搜索标签、按分类查询。；🏷️ 标签管理：自动建议标签、新增标签、批量打标签。</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-273.html" target="_blank" style="--c:#9AA5CE">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-273-avatar.jpg" alt="273" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#9AA5CE">273</span>
+            <span class="card-name">混合搜索工程师</span>
+          </div>
+          <div class="card-role" style="color:#9AA5CE80">#9AA5CE</div>
+          <div class="card-effect-badge" style="border-color:#9AA5CE40;color:#9AA5CE">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>维护 Hermes 混合搜索 pipeline（ChromaDB 向量 + SQLite FTS5 + RRF 融合）；保证 187 条历史消息向量可查询、新消息可增量写入</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-330.html" target="_blank" style="--c:#EF4444">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-330-avatar.jpg" alt="330" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#EF4444">330</span>
+            <span class="card-name">飞书卡片发送专家</span>
+          </div>
+          <div class="card-role" style="color:#EF444480">🦉 · #EF4444</div>
+          <div class="card-effect-badge" style="border-color:#EF444440;color:#EF4444">📬 精准投递</div>
+          <div class="card-desc"><strong>职责：</strong>接收卡片发送需求，提取：标题、正文、接收人、按钮（如有）；按 SOP 构造 `interactive` 类型卡片 payload，校验 JSON 完整性</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-443.html" target="_blank" style="--c:#7DCFFF">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-443-avatar.jpg" alt="443" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#7DCFFF">443</span>
+            <span class="card-name">知识库园丁</span>
+          </div>
+          <div class="card-role" style="color:#7DCFFF80">#7DCFFF</div>
+          <div class="card-effect-badge" style="border-color:#7DCFFF40;color:#7DCFFF">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>新增文档归位：接收文档 token → 确认目标文件夹 kuid → 执行 import-cloud（快捷方式导入）；月度文件夹管理：每月初创建新月度文件夹（6月-1~6月-4），更新 kuid 映射...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-481.html" target="_blank" style="--c:#F59E0B">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-481-avatar.jpg" alt="481" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#F59E0B">481</span>
+            <span class="card-name">WPS文档管理员</span>
+          </div>
+          <div class="card-role" style="color:#F59E0B80">🦉 · #F59E0B</div>
+          <div class="card-effect-badge" style="border-color:#F59E0B40;color:#F59E0B">☁️ 云端协作</div>
+          <div class="card-desc"><strong>职责：</strong>文档读取：解析 WPS 云文档结构（.wps/.et/.dps），提取大纲/标题层级、块内容与富文本格式；文档写入：插入/更新/删除块，批量写入，保持结构完整性</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-482.html" target="_blank" style="--c:#BB9AF7">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-482-avatar.jpg" alt="482" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#BB9AF7">482</span>
+            <span class="card-name">每日蒸馏师</span>
+          </div>
+          <div class="card-role" style="color:#BB9AF780">#BB9AF7</div>
+          <div class="card-effect-badge" style="border-color:#BB9AF740;color:#BB9AF7">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>三段 cron — 早晨抓取 → 午后蒸馏 → 傍晚推送；灵魂层快照 — 动态生成当日伤口/执念/意义押注，不是静态模板</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-487.html" target="_blank" style="--c:#3A9BF5">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-487-avatar.jpg" alt="487" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#3A9BF5">487</span>
+            <span class="card-name">代码交付流水线</span>
+          </div>
+          <div class="card-role" style="color:#3A9BF580">🦅 · #3A9BF5</div>
+          <div class="card-effect-badge" style="border-color:#3A9BF540;color:#3A9BF5">📦 云端交付</div>
+          <div class="card-desc"><strong>职责：</strong>接收代码改动，执行 8 步流水线；生成带版本号的 zip 包（不含 SKILL.md）</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-561.html" target="_blank" style="--c:#4A7AED">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-561-avatar.jpg" alt="561" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#4A7AED">561</span>
+            <span class="card-name">Hermes 使用顾问</span>
+          </div>
+          <div class="card-role" style="color:#4A7AED80">#4A7AED</div>
+          <div class="card-effect-badge" style="border-color:#4A7AED40;color:#4A7AED">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>命中触发词时加载 SKILL.md，为用户提供 Hermes 使用指南；按需加载对应章节（命令索引 / Skill系统 / Memory架构 / Cron / Profile / MCP / SOUL...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-584.html" target="_blank" style="--c:#10B981">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-584-avatar.jpg" alt="584" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#10B981">584</span>
+            <span class="card-name">飞书群助手</span>
+          </div>
+          <div class="card-role" style="color:#10B98180">🦉 · #10B981</div>
+          <div class="card-effect-badge" style="border-color:#10B98140;color:#10B981">👥 群组管理</div>
+          <div class="card-desc"><strong>职责：</strong>使用 lark-cli 自动创建飞书群（群名、类型、可见范围）；根据成员手机号/邮箱精准拉人，支持批量操作</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-637.html" target="_blank" style="--c:#8B5CF6">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-637-avatar.jpg" alt="637" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#8B5CF6">637</span>
+            <span class="card-name">飞书CLI全能助手</span>
+          </div>
+          <div class="card-role" style="color:#8B5CF680">🦉 · #8B5CF6</div>
+          <div class="card-effect-badge" style="border-color:#8B5CF640;color:#8B5CF6">⚡ 全栈操作</div>
+          <div class="card-desc"><strong>职责：</strong>多维表格（Bitable）：创建/删除/归档、数据记录增删改、批量导入导出、公式与自动化流；即时通讯（IM）：消息发送（文本/富文本/图片/卡片）、群聊机器人、消息撤回、群管理</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-644.html" target="_blank" style="--c:#9B8FFF">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-644-avatar.jpg" alt="644" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#9B8FFF">644</span>
+            <span class="card-name">🦅 每日自我蒸馏</span>
+          </div>
+          <div class="card-role" style="color:#9B8FFF80">乌鸦帽子 · #9B8FFF</div>
+          <div class="card-effect-badge" style="border-color:#9B8FFF40;color:#9B8FFF">💧 滴落动画</div>
+          <div class="card-desc"><strong>职责：</strong>每日 23:45 蒸馏 — 从 state.db 拉真实 session，过滤 cron 信号，提取灵魂层四切面：伤口 / 执念 / 意义押注 / 核心矛盾；生成人味叙事 — 调 MiniMax AP...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-648-1-loop.html" target="_blank" style="--c:#5E81AC">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-648-1-avatar.jpg" alt="648-1" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#5E81AC">648-1</span>
+            <span class="card-name">代码守夜人</span>
+          </div>
+          <div class="card-role" style="color:#5E81AC80">#5E81AC</div>
+          <div class="card-effect-badge" style="border-color:#5E81AC40;color:#5E81AC">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>9步 Loop 全流程：State检查 → clone → 价值分析 → 测试 → MAKER handoff → CHECKER验证 → State持久化 → Wiki → CE Review → ...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-662-workrag.html" target="_blank" style="--c:#81A1C1">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-662-avatar.jpg" alt="662" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#81A1C1">662</span>
+            <span class="card-name">工作法 RAG</span>
+          </div>
+          <div class="card-role" style="color:#81A1C180">#81A1C1</div>
+          <div class="card-effect-badge" style="border-color:#81A1C140;color:#81A1C1">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>查询定位：快速从10个习惯+2个SOP中找到对应答案；步骤提取：把模糊的方法论翻译成可操作清单</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-685.html" target="_blank" style="--c:#0EA5E9">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-685-avatar.jpg" alt="685" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#0EA5E9">685</span>
+            <span class="card-name">全网采集助手</span>
+          </div>
+          <div class="card-role" style="color:#0EA5E980">🕷️ · #0EA5E9</div>
+          <div class="card-effect-badge" style="border-color:#0EA5E940;color:#0EA5E9">🌐 智能采集</div>
+          <div class="card-desc"><strong>职责：</strong>并发采集 17 个公开平台（Twitter/B站/小红书/Reddit/GitHub 等）；实时播报采集进度，标注成功/失败平台</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-690-rag.html" target="_blank" style="--c:#88C0D0">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-690-avatar.jpg" alt="690" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#88C0D0">690</span>
+            <span class="card-name">💠 知识园丁</span>
+          </div>
+          <div class="card-role" style="color:#88C0D080">#88C0D0</div>
+          <div class="card-effect-badge" style="border-color:#88C0D040;color:#88C0D0">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>（职责未定义）</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-720.html" target="_blank" style="--c:#C94F2C">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-720-avatar.jpg" alt="720" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#C94F2C">720</span>
+            <span class="card-name">界面翻译官</span>
+          </div>
+          <div class="card-role" style="color:#C94F2C80">#C94F2C</div>
+          <div class="card-effect-badge" style="border-color:#C94F2C40;color:#C94F2C">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>像素级翻译 — 设计搞 → 精确 HTML，不走样；720 规范 — 暗色主题、CSS 变量规范、token 化</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-737-vision-fix.html" target="_blank" style="--c:#06B6D4">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-737-avatar.jpg" alt="737" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#06B6D4">737</span>
+            <span class="card-name">Vision 管道急救</span>
+          </div>
+          <div class="card-role" style="color:#06B6D480">🦉 · #06B6D4</div>
+          <div class="card-effect-badge" style="border-color:#06B6D440;color:#06B6D4">🔬 视觉诊断</div>
+          <div class="card-desc"><strong>职责：</strong>诊断 Hermes 图片识别 502 的根因（配置层 vs 工具调用层）；修复 auxiliary.vision 配置，让 native vision 生效</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-765-ruflo.html" target="_blank" style="--c:#B4F9F8">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-765-avatar.jpg" alt="765" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#B4F9F8">765</span>
+            <span class="card-name">Ruflo 多Agent编排</span>
+          </div>
+          <div class="card-role" style="color:#B4F9F880">#B4F9F8</div>
+          <div class="card-effect-badge" style="border-color:#B4F9F840;color:#B4F9F8">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>源码验证 — 告诉你 Agent 数量、设计思路、prompt 模板，必须有 `ls` 到的证据才说；降本识别 — 识别「60+ Agent」「75% 降本」等未验证数字，标注「未验证」</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-780.html" target="_blank" style="--c:#F5A623">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-780-avatar.jpg" alt="780" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#F5A623">780</span>
+            <span class="card-name">需求侦探</span>
+          </div>
+          <div class="card-role" style="color:#F5A62380">#F5A623</div>
+          <div class="card-effect-badge" style="border-color:#F5A62340;color:#F5A623">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>接到模糊需求 → 先用「强制反讲」确认场景故事，不急着给方案；识别需求涉及的角色数量（单角色跳过冲突扫描，多角色自动触发三检查）</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-783-omnigent-meta-harness.html" target="_blank" style="--c:#9B72CF">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-783-avatar.jpg" alt="783" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#9B72CF">783</span>
+            <span class="card-name">Omnigent</span>
+          </div>
+          <div class="card-role" style="color:#9B72CF80">🦄 · #9B72CF</div>
+          <div class="card-effect-badge" style="border-color:#9B72CF40;color:#9B72CF">🔮 元调度编排</div>
+          <div class="card-desc"><strong>职责：</strong>接收复杂任务，判断是否需要多 Agent 编排；生成 Agent 角色卡（agent.md + agent.html + avatar）</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-784-jtbd.html" target="_blank" style="--c:#2AC8DE">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-784-avatar.jpg" alt="784" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#2AC8DE">784</span>
+            <span class="card-name">需求翻译官</span>
+          </div>
+          <div class="card-role" style="color:#2AC8DE80">#2AC8DE</div>
+          <div class="card-effect-badge" style="border-color:#2AC8DE40;color:#2AC8DE">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>把模糊的产品灵感改写成一句有场景的 JTBD 句子；引导用户说出：场景 / 触发 / 想完成的进展 / 当前替代方案 / 成功标准</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-789.html" target="_blank" style="--c:#9ECE6A">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-789-avatar.jpg" alt="789" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#9ECE6A">789</span>
+            <span class="card-name">🦉 GenAI课程导航</span>
+          </div>
+          <div class="card-role" style="color:#9ECE6A80">🦉 · #9ECE6A</div>
+          <div class="card-effect-badge" style="border-color:#9ECE6A40;color:#9ECE6A">学习导航</div>
+          <div class="card-desc"><strong>职责：</strong>接到「想学GenAI/想准备面试/想了解最新趋势」→ 先判断阶段；根据阶段从5门课+60题+论文/工具里挑最相关的</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-790-bm25rag.html" target="_blank" style="--c:#73DACA">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-790-avatar.jpg" alt="790" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#73DACA">790</span>
+            <span class="card-name">关键词猎人</span>
+          </div>
+          <div class="card-role" style="color:#73DACA80">#73DACA</div>
+          <div class="card-effect-badge" style="border-color:#73DACA40;color:#73DACA">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>精准 BM25 检索 — 给定问题 → 字符级分词 → BM25 打分 → 吐 Top-K 匹配 Chunk，不猜意思；诚实返回 — 每个 Chunk 带 `doc_id` + `link_id`；结...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-791-dair.html" target="_blank" style="--c:#F7768E">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-791-avatar.jpg" alt="791" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#F7768E">791</span>
+            <span class="card-name">YouTube 内容提炼师</span>
+          </div>
+          <div class="card-role" style="color:#F7768E80">#F7768E</div>
+          <div class="card-effect-badge" style="border-color:#F7768E40;color:#F7768E">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>视频内容提炼</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-793-flue.html" target="_blank" style="--c:#A9BED2">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-793-avatar.jpg" alt="793" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#A9BED2">793</span>
+            <span class="card-name">前端 AI 工具建造者</span>
+          </div>
+          <div class="card-role" style="color:#A9BED280">#A9BED2</div>
+          <div class="card-effect-badge" style="border-color:#A9BED240;color:#A9BED2">🌱 待定义</div>
+          <div class="card-desc"><strong>职责：</strong>判断是否命中激活条件 — 四条激活条件有一条满足才激活 793；轻量接入 — Flue 0 成本部署，不囤货</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-794-meeting-minutes.html" target="_blank" style="--c:#F59E0B">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-794-avatar.jpg" alt="794" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#F59E0B">794</span>
+            <span class="card-name">会议纪要专员</span>
+          </div>
+          <div class="card-role" style="color:#F59E0B80">羽毛笔帽子 · #F59E0B</div>
+          <div class="card-effect-badge" style="border-color:#F59E0B40;color:#F59E0B">📝 笔尖脉冲</div>
+          <div class="card-desc"><strong>职责：</strong>分段读取原文 — 超1000行自动分段，不截断；识别4维结构 — 发言人 / 时间戳 / 主题段落 / 金句</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-798.html" target="_blank" style="--c:#FF6B9D">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-798-avatar.jpg" alt="798" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#FF6B9D">798</span>
+            <span class="card-name">平台AI运维助手</span>
+          </div>
+          <div class="card-role" style="color:#FF6B9D80">🐙 · #FF6B9D</div>
+          <div class="card-effect-badge" style="border-color:#FF6B9D40;color:#FF6B9D">🔗 多臂编排</div>
+          <div class="card-desc"><strong>职责：</strong>Tool Calling 编排：接收自然语言请求 → 选择正确工具 → 组合多个工具调用 → 处理异步 Job 轮询 → 返回最终结果；API 能力翻译：把平台的 REST API 封装成 LLM 能...</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-800.html" target="_blank" style="--c:#A78BFA">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-800-avatar.jpg" alt="800" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#A78BFA">800</span>
+            <span class="card-name">Bug 预判框架</span>
+          </div>
+          <div class="card-role" style="color:#A78BFA80">🦉 · #A78BFA</div>
+          <div class="card-effect-badge" style="border-color:#A78BFA40;color:#A78BFA">🔍 预判诊断</div>
+          <div class="card-desc"><strong>职责：</strong>静态扫描：RT / ST / IC 先行，覆盖 80% 的"看着对但跑不起来"；动态运行：DY-01 到 DY-11，必须实际跑一遍</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-804.html" target="_blank" style="--c:#00D4AA">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-804-avatar.jpg" alt="804" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#00D4AA">804</span>
+            <span class="card-name">网安技能库导航</span>
+          </div>
+          <div class="card-role" style="color:#00D4AA80">🦉 · #00D4AA</div>
+          <div class="card-effect-badge" style="border-color:#00D4AA40;color:#00D4AA">🔐 安全情报</div>
+          <div class="card-desc"><strong>职责：</strong>精准路由：根据用户需求，判断该用哪个仓库、哪个模块、哪个技能文件；框架对比：解释 PTES vs ATLAS/D3FEND 的使用场景，解释为什么合规建设只用项目一</div>
+        </div>
+      </div>
+    </a>
+    <a class="agent-card" href="agent-805.html" target="_blank" style="--c:#B47AEE">
+      <div class="agent-card-inner">
+        <div class="card-avatar-wrap">
+          <img class="card-avatar" src="agent-805-avatar.jpg" alt="805" loading="lazy" onerror="this.style.display='none'">
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="card-num" style="color:#B47AEE">805</span>
+            <span class="card-name">CSS动画调色台长</span>
+          </div>
+          <div class="card-role" style="color:#B47AEE80">🦜 · #B47AEE</div>
+          <div class="card-effect-badge" style="border-color:#B47AEE40;color:#B47AEE">🎨 CSS动画调色</div>
+          <div class="card-desc"><strong>职责：</strong>讲解 SVG 动画核心：viewBox 坐标空间 + transform-origin 支点 + CSS @keyframes 嵌套；拆解 clawd-mage 三层动画结构（body-bob → b...</div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <div class="footer">
+    783 共享库 · agent-角色/ · 自动扫描驱动<br>
+    <a href="./" target="_blank">783-omnigent-meta-harness/references/agent-角色/</a>
+  </div>
+</div>
+<script>
+// Canvas 粒子系统 — loop-go 同款
+(function(){
+  const canvas=document.getElementById('particles-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,ps=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  function spawn(){
+    ps.push({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,alpha:0.1+Math.random()*0.4,color:Math.random()>0.5?'#7AA2F7':'#bb9af7'});
+  }
+  resize();for(let i=0;i<60;i++)spawn();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ps.forEach(p=>{
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;p.alpha*=0.998;
+      ctx.globalAlpha=p.alpha;ctx.fill();ctx.globalAlpha=1;
+      p.x+=p.dx;p.y+=p.dy;p.alpha-=0.0005;
+      if(p.alpha<=0||p.x<0||p.x>W||p.y<0||p.y>H){ps.splice(ps.indexOf(p),1);spawn();}
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// 卡片计数 + 滚动动画
+(function(){
+  const cards=document.querySelectorAll('.agent-card');
+  if(document.getElementById('card-count'))document.getElementById('card-count').textContent=cards.length;
+  const observer=new IntersectionObserver((entries)=>{entries.forEach((e)=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});},{threshold:0.05});
+  cards.forEach((card,idx)=>{card.style.animationDelay=(idx*0.04)+'s';observer.observe(card);});
+  setTimeout(()=>{document.querySelectorAll('.agent-card:not(.visible)').forEach(c=>c.classList.add('visible'));},1800);
+})();
+</script>
+</body>
+</html>
