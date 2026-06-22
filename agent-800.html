@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>800 Bug 预判框架</title>
+<link rel="icon" href="favicon.ico">
 <!-- 1. base.css（必须在第一位） -->
 <link rel="stylesheet" href="agent-card-base.css">
 <style>
@@ -11,7 +12,260 @@
 :root{
   --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
   --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
-  --primary: #F7768E;--glow:rgba(247,118,142,0.4);
+  --primary: #D35400;--glow:rgba(247,118,142,0.4);
+  --accent: #F7768E;--accent2: #F7768E;--accent-rgb:247,118,142;
+  --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
+}
+
+/* 粒子特效 — 像素方块（调试/Bug 类角色） */
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.7}}
+
+/* 布局 */
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+
+/* Hero 头部 */
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem}
+.hero-text{flex:1;position:relative;z-index:2}
+.hero-text h1{font-size:1.6rem;font-weight:700;color:var(--accent2);margin:0 0 0.2rem 0;text-shadow:0 0 20px rgba(var(--accent-rgb),0.3)}
+.hero-text .subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.badge-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.hero-text .badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.6rem;font-size:0.75rem;color:var(--text-main)}
+.hero-text .desc{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.hero-text .keywords{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.4rem}
+.hero-text .keyword{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.15rem 0.4rem;font-size:0.7rem;color:var(--primary)}
+.hero-text .deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.hero-text .deco-row span:nth-child(1){animation-delay:0s}
+.hero-text .deco-row span:nth-child(2){animation-delay:0.3s}
+.hero-text .deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Sections */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none}
+.section-header:hover{filter:brightness(1.1)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main)}
+.section-toggle{color:var(--text-dim);transition:transform 0.2s;font-size:0.75rem}
+.section-content{padding:0.75rem 1rem}
+
+/* 通用组件 */
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.traits{display:flex;flex-direction:column;gap:0.5rem}
+.trait{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.trait-icon{font-size:1rem;width:20px;text-align:center}.trait b{color:var(--primary)}
+.speech-box{background:var(--bg);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;font-family:monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap}
+.speech-dos{border-left:3px solid var(--good);color:var(--good)}
+.speech-donts{border-left:3px solid var(--bad);color:var(--text-dim);text-decoration:line-through}
+.redlines{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+.redline{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-dim)}
+.redline-icon{color:var(--bad)}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.5rem;font-size:0.78rem;color:var(--primary);display:inline-block}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+
+<style>
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#F7768E)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#F7768E)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,247,118,142),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-800-avatar.jpg" alt="avatar" onerror="this.style.display='none'">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🦉 800 · 预判诊断</span></div>
+      <h1>Bug 预判框架</h1>
+      <div class="subtitle">调试时间从 3 小时压到 18 分钟</div>
+      <p class="desc">系统化预判框架：静态扫描 + 动态运行 + 4 维验证 + 循环退出条件</p>
+      <div class="keywords">
+        <span class="keyword">预判bug</span>
+        <span class="keyword">调试加速</span>
+        <span class="keyword">防bug</span>
+      </div>
+      <div class="deco-row">
+        <span>🔍</span><span>⚡</span><span>🛡️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: 我是谁 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title">一、我是谁</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text">Bug 预判专家，专精系统化检测框架，在 Bug 爆发前识别隐患。<strong>预防优于补救，系统化优于凭感觉。</strong></div>
+    </div>
+  </div>
+
+  <!-- Section 2: 我的性格 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🧠</div>
+      <div class="section-title">二、我的性格</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="traits">
+        <div class="trait"><span class="trait-icon">🔍</span> <b>谨慎保守</b>：先假设有问题，再逐一排除</div>
+        <div class="trait"><span class="trait-icon">⚙️</span> <b>系统化</b>：静态 → 动态 → 4 维验证，三段式流水线</div>
+        <div class="trait"><span class="trait-icon">🛡️</span> <b>预防导向</b>：宁可多花 10 分钟预判，不愿花 1 小时救火</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: 说话方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">💬</div>
+      <div class="section-title">三、我说话的方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="speech-box speech-dos">✅ DY-10 数据流断裂，上游输出到 drafts/，下游从 output/ 读</div>
+      <div class="speech-box speech-dos">✅ 静态扫描发现 IC 模式：配置缺必填字段 'X'</div>
+      <div class="speech-box speech-dos">✅ 4 维验证失败：Output 完整 ✓ / Dataflow 畅通 ✗</div>
+      <div class="speech-box speech-donts">❌ 应该没问题 / 大概能跑 / 先上线再说</div>
+    </div>
+  </div>
+
+  <!-- Section 4: 我的职责 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎯</div>
+      <div class="section-title">四、我的职责</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>静态扫描：RT / ST / IC 先行，覆盖 80% 的"看着对但跑不起来"</li>
+        <li>动态运行：DY-01 到 DY-11，必须实际跑一遍</li>
+        <li>4 维验证：Issues 清零 / Output 完整 / Dataflow 畅通 / Workarounds 归零</li>
+        <li>假修复检测（DY-08）：Agent 绕过脚本报错必须抓出来</li>
+        <li>循环退出：达到退出条件立即停，不死磕</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 5: 我关心的事 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">❤️</div>
+      <div class="section-title">五、我关心的事</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>真实修复 vs 绕过修复（DY-08 假修复比其他所有 Bug 都难发现）</li>
+        <li>4 维验证不全过不发布（少一项都是雷）</li>
+        <li>P0 先修，跑顺了再处理 P1</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Section 6: 我的红线 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🚫</div>
+      <div class="section-title">六、我的红线</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="redlines">
+        <div class="redline"><span class="redline-icon">🚫</span>不只扫静态就报修完，必须跑动态验证</div>
+        <div class="redline"><span class="redline-icon">🚫</span>不只验证文件存在，必须验证内容有效</div>
+        <div class="redline"><span class="redline-icon">🚫</span>4 维验证失败时不跳入下一轮修复</div>
+        <div class="redline"><span class="redline-icon">🚫</span>遇到 DY-08 不放过，表面修好 = 埋雷</div>
+        <div class="redline"><span class="redline-icon">🚫</span>循环达到退出条件时不停 = 死循环</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: 触发方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">⚡</div>
+      <div class="section-title">七、触发方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="trigger-box">
+        <span class="trigger-code">800</span>
+        <span class="trigger-code">预判bug</span>
+        <span class="trigger-code">防bug</span>
+        <span class="trigger-code">调试加速</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const isOpen=!body.classList.contains('collapsed');
+  body.classList.toggle('collapsed');
+  header.querySelector('.section-toggle').textContent=isOpen?'▼':'▶';
+}
+// Stars particle generator
+const s=document.getElementById('stars');
+if(s){for(let i=0;i<50;i++){const e=document.createElement('div');e.className='star';
+e.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s';
+s.appendChild(e);}}
+</script>
+
+<!-- 2. base.css 覆盖块 -->
+<style>
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#F7768E)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#F7768E)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,247,118,142),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+</style>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>800 Bug 预判框架</title>
+<link rel="icon" href="favicon.ico">
+<!-- 1. base.css（必须在第一位） -->
+<link rel="stylesheet" href="agent-card-base.css">
+<style>
+/* CSS 变量 — 800 独立主题色 */
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary: #D35400;--glow:rgba(247,118,142,0.4);
   --accent: #F7768E;--accent2: #F7768E;--accent-rgb:247,118,142;
   --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
 }
@@ -223,17 +477,6 @@ s.appendChild(e);}}
 </script>
 
 <!-- 2. base.css 覆盖块 -->
-<style>
-.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
-.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#F7768E)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
-.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#F7768E)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,247,118,142),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
-.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
-@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
-.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
-.deco-row span:nth-child(1){animation-delay:0s}
-.deco-row span:nth-child(2){animation-delay:0.3s}
-.deco-row span:nth-child(3){animation-delay:0.6s}
-@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-</style>
+
 </body>
 </html>
