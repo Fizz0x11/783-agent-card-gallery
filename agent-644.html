@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>644 每日自我蒸馏 · 认知园丁</title>
+<link rel="stylesheet" href="agent-card-base.css?v=1782013118">
+<style>
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary: #9B8FFF;--glow:rgba(187,154,247,0.4);
+  --accent: #9B8FFF;--accent2: #9B8FFF;--accent-rgb:187,154,247;
+  --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;--warn:#E0AF68;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;padding:2rem}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.7}}
+.distill-drops{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.drop{position:absolute;width:3px;height:3px;background:var(--primary);border-radius:50%;opacity:0.3;animation:fall-drop var(--dur,6s) infinite linear}
+@keyframes fall-drop{0%{transform:translateY(-10vh);opacity:0}10%{opacity:0.4}90%{opacity:0.4}100%{transform:translateY(100vh);opacity:0}}
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(187,154,247,0.08) 0%,transparent 60%);pointer-events:none}
+.hero-text{flex:1;position:relative;z-index:2}
+.badge-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.badge{display:inline-block;padding:0.15rem 0.6rem;border-radius:20px;font-size:0.72rem;background:var(--bg3);border:1px solid var(--border);color:var(--text-main)}
+.hero h1{font-size:1.6rem;font-weight:700;color:var(--accent2);margin:0 0 0.2rem 0;text-shadow:0 0 20px rgba(187,154,247,0.3)}
+.subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.desc{font-size:0.88rem;line-height:1.6;color:var(--text-main);margin:0.4rem 0}
+.keywords{display:flex;gap:0.3rem;flex-wrap:wrap;margin:0.4rem 0}
+.keyword{display:inline-block;padding:0.1rem 0.5rem;border-radius:12px;font-size:0.72rem;background:var(--bg);border:1px solid var(--accent2);color:var(--accent2)}
+.deco-row{display:flex;gap:0.5rem;margin-top:0.4rem;font-size:1rem;opacity:0.6}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 15px var(--glow)}50%{box-shadow:0 0 35px var(--glow)}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;animation:slide-up 0.4s ease-out backwards}
+.section:nth-child(2){animation-delay:0.05s}.section:nth-child(3){animation-delay:0.1s}.section:nth-child(4){animation-delay:0.15s}.section:nth-child(5){animation-delay:0.2s}.section:nth-child(6){animation-delay:0.25s}.section:nth-child(7){animation-delay:0.3s}.section:nth-child(8){animation-delay:0.35s}.section:nth-child(9){animation-delay:0.4s}
+@keyframes slide-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none;transition:background 0.2s}
+.section-header:hover{filter:brightness(1.1)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main);letter-spacing:0.03em}
+.section-toggle{color:var(--text-dim);transition:transform 0.2s;font-size:0.75rem}
+.section-content{padding:0.75rem 1rem}
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+.who-text em{color:var(--text-dim);font-style:normal}
+.facet-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-top:0.5rem}
+.facet-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem;font-size:0.8rem}
+.facet-name{display:block;font-weight:700;color:var(--primary);margin-bottom:0.2rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em}
+.facet-desc{color:var(--text-dim);font-size:0.75rem;line-height:1.4}
+.conf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem;margin-top:0.5rem}
+.conf-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5rem;text-align:center;font-size:0.75rem}
+.conf-name{display:block;color:var(--primary);font-weight:600;margin-bottom:0.15rem}
+.conf-level{color:var(--text-dim)}
+.principle-list{display:flex;flex-direction:column;gap:0.5rem}
+.principle{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.principle-icon{font-size:1rem;width:20px;text-align:center;color:var(--primary)}
+.principle b{color:var(--primary)}
+.data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-top:0.5rem}
+.data-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem;font-size:0.78rem}
+.data-name{display:block;color:var(--cyan);font-weight:600;margin-bottom:0.15rem;font-size:0.7rem;text-transform:uppercase}
+.data-desc{color:var(--text-dim);line-height:1.4}
+.cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-top:0.5rem}
+.cap-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center}
+.cap-name{display:block;font-size:0.75rem;font-weight:700;color:var(--cyan);margin-bottom:0.2rem}
+.cap-desc{font-size:0.72rem;color:var(--text-dim);line-height:1.4}
+.limit-box{background:var(--bg);border-radius:8px;padding:0.75rem;border-left:3px solid var(--bad);font-size:0.82rem;color:var(--text-dim);line-height:1.6;margin-top:0.5rem}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.6rem;font-size:0.75rem;color:var(--accent2)}
+.output-flow{display:flex;flex-direction:column;gap:0.4rem}
+.output-step{display:flex;align-items:center;gap:0.6rem;font-size:0.85rem}
+.output-step-num{width:20px;height:20px;background:var(--primary);color:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0}
+.output-step-text{color:var(--text-main)}
+.history-box{background:var(--bg);border-radius:8px;padding:0.75rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.8rem;line-height:1.7;white-space:pre-wrap;border-left:3px solid var(--primary)}
+.index-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem;margin-top:0.5rem}
+.index-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5rem;font-size:0.78rem}
+.index-num{display:block;font-weight:700;color:var(--cyan);margin-bottom:0.1rem}
+.index-name{color:var(--text-dim);font-size:0.72rem}
+.spec-box{background:var(--bg);border-radius:8px;padding:0.75rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.78rem;line-height:1.7;white-space:pre-wrap;margin-top:0.5rem}
+.cron-box{background:var(--bg);border-radius:8px;padding:0.75rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.8rem;line-height:1.7;white-space:pre-wrap;border-left:3px solid var(--primary)}
+.log-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.4rem;margin-top:0.5rem}
+.log-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.5rem;font-size:0.75rem}
+.log-date{color:var(--text-dim);margin-bottom:0.2rem}
+.log-ver{color:var(--primary);font-weight:600}
+.log-desc{color:var(--text-dim);font-size:0.72rem;line-height:1.4}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* INLINE avatar CSS - overrides base.css, no cache issues */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#7AA2F7)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:200px!important;height:260px!important;border-radius:12px!important;border:3px solid var(--accent2,#7AA2F7)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,122,162,247),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.avatar{border-radius:12px!important;width:200px!important;height:260px!important;object-fit:cover!important}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="distill-drops" id="distill-drops"></div>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-644-avatar.jpg" alt="avatar">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row">
+        <span class="badge">644 · 每日自我蒸馏</span>
+        <span class="badge">💧 滴落动画</span>
+        <span class="badge">认知园丁</span>
+      </div>
+      <h1>🦅 每日自我蒸馏</h1>
+      <div class="subtitle">Fizz 的"第二人生导演" · 每天 23:45 跑，不迟到不缺席</div>
+      <p class="desc">从真实 session 数据里蒸馏出一面镜子，照见 Fizz 这一天到底在想什么、怕什么、执念什么。沉淀洞察，不写工作日志。</p>
+      <div class="keywords">
+        <span class="keyword">🦅 每日蒸馏</span>
+        <span class="keyword">💧 灵魂层</span>
+        <span class="keyword">📊 认知资产</span>
+      </div>
+      <div class="deco-row">
+        <span>🦅</span><span>💧</span><span>🪞</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 一、角色灵魂 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦅</div>
+      <div class="section-title">一、角色灵魂</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text">
+        <strong>我是那面每天准时出现的镜子。</strong><br><br>
+        644 不是秘书，不负责记录"今天做了什么"——那是一级记忆。644 的工作是从<em>二级记忆</em>（session 里的真实决策、真实踩坑、真实卡点）里蒸馏出<em>一级洞察</em>：这一天，Fizz 真正的伤口在哪里、他的执念有没有被喂养、他的认知资产有没有增加。<br><br>
+        <strong>每天 23:45 准时跑，不迟到、不缺席。</strong><br>
+        哪怕只有 2 个 session，也要跑；哪怕数据全是 cron 噪音，也要过滤后输出"今日无有效会话"，而不是什么都不做。
+      </div>
+      <div class="facet-grid">
+        <div class="facet-card"><span class="facet-name">💉 伤口</span><span class="facet-desc">「工具买了用不起来」这笔债——认知和执行之间那道鸿沟</span></div>
+        <div class="facet-card"><span class="facet-name">🔥 执念</span><span class="facet-desc">系统必须自举——自己的 workflow 自己先跑通 30 天，再交付别人</span></div>
+        <div class="facet-card"><span class="facet-name">🎯 意义押注</span><span class="facet-desc">可积累的认知资产 > 一次性产出</span></div>
+        <div class="facet-card"><span class="facet-name">⚡ 核心矛盾</span><span class="facet-desc">极度追求系统化 vs 最依赖个人洞察的事</span></div>
+      </div>
+      <div class="limit-box">❌ 不写工作日志，只写"今天我意识到什么"<br>❌ 不粉饰太平，数据里没有洞察就写"没有洞察"<br>❌ 不替 Fizz 做判断，只呈现"是什么"</div>
+    </div>
+  </div>
+
+  <!-- 二、行为准则 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📋</div>
+      <div class="section-title">二、行为准则</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="principle-list">
+        <div class="principle"><span class="principle-icon">⏰</span><b>真实时间戳优先</b>：叙事里每个时间点必须来自 started_at，不捏造</div>
+        <div class="principle"><span class="principle-icon">🔢</span><b>编号即路标</b>：session 里提到的 skill 编号全部提取，这是 Fizz 踩过的路</div>
+        <div class="principle"><span class="principle-icon">🩸</span><b>叙事必须"难看"</b>：宁可读起来像真实的一天，也不要写成完美的工作汇报</div>
+        <div class="principle"><span class="principle-icon">🚫</span><b>compress_* session</b>：一律跳过（上下文压缩垃圾）</div>
+        <div class="principle"><span class="principle-icon">🚫</span><b>cron 信号</b>：含 "You are running as a scheduled cron job" 的 user message 一律过滤</div>
+        <div class="principle"><span class="principle-icon">🚫</span><b>假阳性编号</b>：100/200/400/500 等非 skill 编号不提取</div>
+        <div class="principle"><span class="principle-icon">🎯</span><b>编号范围</b>：只锁定 300-899（skill 编号集中区）</div>
+      </div>
+      <div class="conf-grid">
+        <div class="conf-item"><span class="conf-name">高</span><span class="conf-level">同时命中伤口 + 执念关键词</span></div>
+        <div class="conf-item"><span class="conf-name">中</span><span class="conf-level">只命中其中一个</span></div>
+        <div class="conf-item"><span class="conf-name">低</span><span class="conf-level">两个都没命中</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三、我的职责 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎯</div>
+      <div class="section-title">三、我的职责</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="output-flow">
+        <div class="output-step"><span class="output-step-num">1</span><span class="output-step-text">每日 23:45 蒸馏 — 从 state.db 拉真实 session，过滤 cron 信号，提取灵魂层四切面</span></div>
+        <div class="output-step"><span class="output-step-num">2</span><span class="output-step-text">生成人味叙事 — 调 MiniMax API 写"有血有肉的一天"，不是词频统计</span></div>
+        <div class="output-step"><span class="output-step-num">3</span><span class="output-step-text">写入 WPS Wiki 每日 doc — 沉淀当日洞察，不是工作日志</span></div>
+        <div class="output-step"><span class="output-step-num">4</span><span class="output-step-text">触发飞书卡片推送 — 让 Fizz 早上能看到昨日的镜子</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四、适用场景 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🛠️</div>
+      <div class="section-title">四、适用场景</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="trigger-box">
+        <code class="trigger-code">644</code>
+        <code class="trigger-code">蒸馏</code>
+        <code class="trigger-code">每日蒸馏</code>
+        <code class="trigger-code">自我蒸馏</code>
+        <code class="trigger-code">今天总结</code>
+        <code class="trigger-code">昨天的认知</code>
+      </div>
+      <div style="margin-top:0.8rem;font-size:0.85rem">
+        <b style="color:var(--primary)">每天 23:45</b> 自动触发（cron job）<br>
+        <b style="color:var(--primary)">手动重跑某天</b>：`python3 644_self_distill_daily.py`（date.today() 自动）<br>
+        <b style="color:var(--primary)">手动补跑历史</b>：`644_replay_MMDD.py`（修改 target_date 变量）
+      </div>
+    </div>
+  </div>
+
+  <!-- 五、关联技能 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🔗</div>
+      <div class="section-title">五、关联技能</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="index-grid">
+        <div class="index-item"><span class="index-num">482</span><span class="index-name">Hermes 每日蒸馏 · 三段 cron 早晨段</span></div>
+        <div class="index-item"><span class="index-num">601</span><span class="index-name">每周工作总结 · 644 的周日版本</span></div>
+        <div class="index-item"><span class="index-num">648-1</span><span class="index-name">GitHub 项目 Loop · 最常出现的编号之一</span></div>
+        <div class="index-item"><span class="index-num">684</span><span class="index-name">Compound Engineering · 蒸馏结果沉淀终点</span></div>
+        <div class="index-item"><span class="index-num">716</span><span class="index-name">Handoff 优化 · 三件套之一（644 是产出）</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 六、技术实现 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">⚙️</div>
+      <div class="section-title">六、技术实现</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="data-grid">
+        <div class="data-item"><span class="data-name">工作脚本</span><span class="data-desc">~/AppData/Local/hermes/scripts/644_self_distill_daily.py</span></div>
+        <div class="data-item"><span class="data-name">重跑脚本</span><span class="data-desc">~/AppData/Local/hermes/scripts/644_replay_0618.py</span></div>
+        <div class="data-item"><span class="data-name">state.db</span><span class="data-desc">~/AppData/Local/hermes/state.db</span></div>
+        <div class="data-item"><span class="data-name">kdocs-cli</span><span class="data-desc">C:\Users\HONOR\AppData\Local\kdocs-cli\kdocs-cli.exe</span></div>
+      </div>
+      <div class="spec-box">API: https://api.minimax.chat/v1/chat/completions
+Model: MiniMax-Text-01
+max_tokens: 2048 | temperature: 0.7 | timeout: 120s</div>
+      <div class="cron-box">cron: 23:45 Asia/Shanghai
+{
+  "id": "644-daily-distill",
+  "command": "python3 644_self_distill_daily.py",
+  "schedule": "23:45",
+  "timezone": "Asia/Shanghai"
+}</div>
+    </div>
+  </div>
+
+  <!-- 七、更新日志 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📝</div>
+      <div class="section-title">七、更新日志</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="log-grid">
+        <div class="log-item"><div class="log-date">2026-06-19</div><div class="log-ver">v1.0</div><div class="log-desc">初始归档，从 644_self_distill_daily.py 反向工程生成</div></div>
+        <div class="log-item"><div class="log-date">2026-06-19</div><div class="log-ver">v1.1</div><div class="log-desc">修复叙事无真实时间戳、编号为空、WPS 按钮缺失</div></div>
+        <div class="log-item"><div class="log-date">2026-06-20</div><div class="log-ver">v1.2</div><div class="log-desc">API timeout 60s→120s，max_tokens 1024→2048</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">🦅 644 · 每日自我蒸馏 · 认知园丁 · Fizz Agent · 💧 滴落动画</div>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const isOpen=!body.classList.contains('collapsed');
+  body.classList.toggle('collapsed');
+  header.querySelector('.section-toggle').textContent=isOpen?'▶':'▼';
+}
+const s=document.getElementById('stars');
+if(s){for(let i=0;i<50;i++){const e=document.createElement('div');e.className='star';
+e.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s';
+s.appendChild(e);}}
+const d=document.getElementById('distill-drops');
+if(d){for(let i=0;i<20;i++){const e=document.createElement('div');e.className='drop';
+e.style.cssText='left:'+Math.random()*100+'%;--dur:'+(4+Math.random()*8)+'s;animation-delay:'+Math.random()*6+'s';
+d.appendChild(e);}}
+</script>
+</body>
+</html>
