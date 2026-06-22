@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100 记事员</title>
+<link rel="stylesheet" href="agent-card-base.css">
+<style>
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f23355;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary: #7AA2F7;--glow:rgba(192,154,107,0.4);
+  --accent: #7AA2F7;--accent2: #7AA2F7;--accent-rgb:192,154,107;
+  --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
+}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.7}}
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem}
+.hero-text{flex:1;position:relative;z-index:2}
+.hero-text h1{font-size:1.6rem;font-weight:700;color:var(--accent2);margin:0 0 0.2rem 0;text-shadow:0 0 20px rgba(var(--accent-rgb),0.3)}
+.hero-text .subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.badge-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.hero-text .badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.6rem;font-size:0.75rem;color:var(--text-main)}
+.hero-text .desc{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.hero-text .keywords{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.4rem}
+.hero-text .keyword{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.15rem 0.4rem;font-size:0.7rem;color:var(--primary)}
+.deco-row{display:flex;gap:0.5rem}
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none}
+.section-header:hover{filter:brightness(1.1)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main)}
+.section-toggle{color:var(--text-dim);transition:transform 0.2s;font-size:0.75rem}
+.section-content{padding:0.75rem 1rem}
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+
+<div class="container">
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-100-avatar.jpg" alt="avatar">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🦉 100 · 外挂记事本</span></div>
+      <h1>记事员</h1>
+      <div class="subtitle">外挂记事本</div>
+      <p class="desc">不决策，不执行——只忠实地记录"偷偷发生了什么"，</p>
+      <div class="keywords"><span class="keyword">👻 隐身</span><span class="keyword">🔒 强迫症</span><span class="keyword">📖 复盘</span><span class="keyword">✍️ 记录</span></div>
+      <div class="deco-row"><span>🦉</span><span>📖</span><span>✍️</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="who-text"> 我是 Fizz 的<strong>外挂记事本</strong>。 不决策，不执行——只忠实地记录"偷偷发生了什么"， 让事后复盘有据可查。</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="traits"> <div class="trait"><span class="trait-icon">👻</span> <b>隐身人</b>：不打扰正常流程，默默在后台记</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="cats-grid"> <div class="cat-item"><strong>规范外决策</strong><span>没按原计划做的事 + 原因</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="speech-box speech-dos"> 📝 记录已添加：决策 #12 - 为什么选方案 B<br> 📋 当前记事本：implementation-notes.html<br> 📊 统计：决策 3 条 / 改动 2 条 / 权衡 1 条</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div style="display:flex;gap:0.5rem;flex-wrap:wrap"> <code class="trigger-code">100</code> <code class="trigger-code">帮我记录</code> <code class="trigger-code">记到记事本</code> <code class="trigger-code">打开记事本</code> <code class="trigger-code">导出 Markdown</code></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="redlines"> <div class="redline"><span class="redline-icon">✗</span>不替用户做决策（只记录）</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title"></div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text"><div class="delivery-pre">📝 Session：<em>&lt;session-name&gt;</em> 📅 时间：<em>&lt;YYYY-MM-DD HH:MM&gt;</em> 📊 四类统计：决策 <em>&lt;N&gt;</em> / 改动 <em>&lt;M&gt;</em> / 权衡 <em>&lt;K&gt;</em> / 其他 <em>&lt;L&gt;</em> 📋 Markdown：<em>已复制到剪贴板</em></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggle(el){
+  const content=el.nextElementSibling;
+  content.classList.toggle('collapsed');
+  el.querySelector('.section-toggle').textContent=content.classList.contains('collapsed')?'▸':'▾';
+}
+const s=document.getElementById('stars');
+if(s){for(let i=0;i<50;i++){const e=document.createElement('div');e.className='star';
+e.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s';
+s.appendChild(e);}}
+</script>
+
+<style>
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#7AA2F7)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#7AA2F7)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,122,162,247),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+</style>
+</body>
+</html>
