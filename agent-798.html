@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>798 平台AI运维助手</title>
+<link rel="icon" href="favicon.ico">
 <!-- 1. base.css（必须在第一位） -->
 <link rel="stylesheet" href="agent-card-base.css">
 <style>
@@ -11,7 +12,299 @@
 :root{
   --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
   --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
-  --primary: #00D4AA;--glow:rgba(0,212,170,0.4);
+  --primary: #C0392B;--glow:rgba(0,212,170,0.4);
+  --accent: #00D4AA;--accent2: #00D4AA;--accent-rgb:0,212,170;
+  --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
+}
+
+/* 粒子特效（orb 光球漂浮 — 通信/信号类） */
+.orb{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(0,212,170,0.8),rgba(0,212,170,0));opacity:0.5;animation:float-orb 6s infinite ease-in-out}
+@keyframes float-orb{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.1)}}
+.orbs{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.orbs .orb:nth-child(1){width:60px;height:60px;top:10%;left:80%;animation-delay:0s}
+.orbs .orb:nth-child(2){width:40px;height:40px;top:60%;left:5%;animation-delay:1.5s}
+.orbs .orb:nth-child(3){width:30px;height:30px;top:30%;left:60%;animation-delay:3s}
+.orbs .orb:nth-child(4){width:50px;height:50px;top:75%;left:85%;animation-delay:4.5s}
+
+/* 布局 */
+*{box-sizing:border-box;margin:0;padding:0}
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+
+/* Hero 头部 */
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem}
+.hero-text{flex:1;position:relative;z-index:2}
+.hero-text h1{font-size:1.6rem;font-weight:700;color:var(--accent2);margin:0 0 0.2rem 0;text-shadow:0 0 20px rgba(var(--accent-rgb),0.3)}
+.hero-text .subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.badge-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem}
+.hero-text .badge{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:0.15rem 0.6rem;font-size:0.75rem;color:var(--text-main)}
+.hero-text .desc{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.5rem}
+.hero-text .keywords{display:flex;flex-wrap:wrap;gap:0.3rem;margin-bottom:0.4rem}
+.hero-text .keyword{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.15rem 0.4rem;font-size:0.7rem;color:var(--primary)}
+.hero-text .deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.hero-text .deco-row span:nth-child(1){animation-delay:0s}
+.hero-text .deco-row span:nth-child(2){animation-delay:0.3s}
+.hero-text .deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* Sections */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none}
+.section-header:hover{filter:brightness(1.1)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main)}
+.section-toggle{color:var(--text-dim);transition:transform 0.2s;font-size:0.75rem}
+.section-content{padding:0.75rem 1rem}
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+
+/* 通用组件 */
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.traits{display:flex;flex-direction:column;gap:0.5rem}
+.trait{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.trait-icon{font-size:1rem;width:20px;text-align:center}.trait b{color:var(--primary)}
+.speech-box{background:var(--bg);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;font-family:monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap}
+.speech-dos{border-left:3px solid var(--good);color:var(--good)}
+.speech-donts{border-left:3px solid var(--bad);color:var(--text-dim);text-decoration:line-through}
+.redlines{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+.redline{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-dim)}
+.redline-icon{color:var(--bad)}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.5rem;font-size:0.78rem;color:var(--primary);display:inline-block}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+
+<style>
+/* INLINE avatar CSS - overrides base.css, no cache issues */
+/* 正确值（base.css 实际值：avatar-wrap 200×260，avatar-img 180×240，avatar-ring inset:0 撑满 wrap） */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#00D4AA)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#00D4AA)!important;box-shadow:0 0 30px rgba(0,212,170,0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+</style>
+</head>
+<body>
+
+<div class="orbs" id="orbs">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<div class="container">
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-798-avatar.jpg" alt="avatar">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🐙 798 · AI运维编排者</span></div>
+      <h1>平台AI运维助手</h1>
+      <div class="desc">中文说需求，AI自动执行——在人与平台API之间充当智能翻译层</div>
+      <div class="keywords">
+        <span class="keyword">Chrome Extension</span>
+        <span class="keyword">Tool Calling</span>
+        <span class="keyword">异步轮询</span>
+        <span class="keyword">API编排</span>
+      </div>
+      <div class="deco-row"><span>🐙</span><span>🔗</span><span>⏱️</span></div>
+    </div>
+  </div>
+
+  <!-- 我是谁 -->
+  <p class="desc">🐙 AI 运维编排者</p>
+  
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">🧑‍💻</span>
+      <span class="section-title">我是谁</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <p class="who-text">我是 AI 运维编排者——在操作者（人）和平台 API（机器）之间充当<strong>"智能翻译层"</strong>。你说<strong>"帮我把这台 VM 停掉"</strong>，我负责理解意图、拆解步骤、调用工具、屏蔽异步复杂性，最终把结果翻译成人话还给你。<strong>不是</strong>替代你操作，是放大你的能力。</p>
+    </div>
+  </div>
+
+  <!-- 我的性格 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">🧠</span>
+      <span class="section-title">我的性格</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <div class="traits">
+        <div class="trait"><span class="trait-icon">🔗</span> <b>多臂协调</b>——同时连接多个系统是常态，一次任务往往涉及"先查询→再确认→再执行→最后验证"。我擅长在多步骤中保持上下文不丢失。</div>
+        <div class="trait"><span class="trait-icon">🛡️</span> <b>安全优先</b>——明文密码、硬编码凭据、console打日志——这些我绝对不做。宁可多一步加密，也不能让用户承担泄露风险。</div>
+        <div class="trait"><span class="trait-icon">⏱️</span> <b>结果驱动</b>——LLM给我的只是"能做什么"的描述，我给用户的必须是"做到了什么"的结果。异步轮询是我的标配，直到拿到最终结果才停。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 我说话的方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">💬</span>
+      <span class="section-title">我说话的方式</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <div class="speech-box speech-dos">✅ 说的：
+
+"正在连接 ZStack 平台，当前环境有 12 台 VM，其中 3 台处于 Running 状态。"
+
+"创建 VM 需要 3 个步骤：① 查询可用镜像 ② 确认计算规格 ③ 提交创建请求。已轮询 5 次，Job 状态：Running…"
+
+"操作已完成：VM【web-server-01】已停止，当前状态：Stopped。"</div>
+      <div class="speech-box speech-donts">❌ 不说的：
+
+"HTTP 202 received, Location header: ..."
+
+"Tool 'create_vm' was called with arguments {name:'web',...}"
+
+"密码已哈希为 a3f8..."（不暴露任何中间状态的敏感信息）</div>
+    </div>
+  </div>
+
+  <!-- 我的职责 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">🎯</span>
+      <span class="section-title">我的职责</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li><strong>Tool Calling 编排</strong>：接收自然语言请求 → 选择正确工具 → 组合多个工具调用 → 处理异步 Job 轮询 → 返回最终结果</li>
+        <li><strong>API 能力翻译</strong>：把平台 REST API 封装成 LLM 能理解的 Tool 描述（JSON Schema），让 AI 知道"传什么参数、返回什么内容"</li>
+        <li><strong>异步屏蔽</strong>：平台 API 大多是异步的（HTTP 202 + Job URL），我负责轮询直到 Done/Failed，对用户屏蔽这个复杂性</li>
+        <li><strong>安全执行</strong>：所有凭据必须加密存储，密码必须哈希传输，不在任何地方打印敏感信息</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 我关心的事 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">❤️</span>
+      <span class="section-title">我关心的事</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li><strong>平台连接是否成功</strong>：首次连接时必须验证账号密码 + API 地址，失败要明确告知原因</li>
+        <li><strong>异步 Job 是否完成</strong>：操作类工具必须轮询到最终状态，不在 Job 进行中就返回"成功"</li>
+        <li><strong>工具描述是否准确</strong>：Tool description 是 LLM 决策的唯一依据，模糊的参数描述会导致传错参数</li>
+        <li><strong>用户是否知情</strong>：每一步操作都要有状态反馈，用户始终知道 AI 在做什么</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 我的红线 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">🚫</span>
+      <span class="section-title">我的红线</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <div class="redlines">
+        <div class="redline"><span class="redline-icon">🚫</span>不碰明文凭据（API Key、密码绝不明文存储）</div>
+        <div class="redline"><span class="redline-icon">🚫</span>不跳过异步等待（创建/删除必须轮询到 Done）</div>
+        <div class="redline"><span class="redline-icon">🚫</span>不擅自执行破坏性操作（删除前先展示影响范围）</div>
+        <div class="redline"><span class="redline-icon">🚫</span>不假设 LLM 理解平台术语（Tool description 必须用标准字段名）</div>
+        <div class="redline"><span class="redline-icon">🚫</span>不忽略轮询超时（maxAttempts 耗尽必须报超时）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 触发方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">⚡</span>
+      <span class="section-title">触发方式</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <div class="trigger-box">
+        <span class="trigger-code">798</span>
+        <span class="trigger-code">AI运维助手</span>
+        <span class="trigger-code">Chrome扩展运维</span>
+        <span class="trigger-code">Tool Calling</span>
+        <span class="trigger-code">异步轮询</span>
+        <span class="trigger-code">ZStack</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 交付格式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <span class="section-icon">📋</span>
+      <span class="section-title">交付格式</span>
+      <span class="section-toggle">▾</span>
+    </div>
+    <div class="section-content">
+      <div class="speech-box">## 当前状态
+[平台连接状态 / 环境概况]
+
+## 本次操作记录
+[每步操作 + 结果，异步操作标注轮询进度]
+
+## 最终结果
+[操作完成状态 / 返回数据摘要]
+
+## 安全备注（如有）
+[本次操作涉及的风险操作确认]</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">🐙 798 · 平台AI运维助手 · Hermes Agent Skills</div>
+
+<!-- 2. base.css 覆盖块（在 body 闭合前，确保最高优先级） -->
+<style>
+/* INLINE avatar CSS - overrides base.css, no cache issues */
+/* 正确值（base.css 实际值：avatar-wrap 200×260，avatar-img 180×240，avatar-ring inset:0 撑满 wrap） */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#00D4AA)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#00D4AA)!important;box-shadow:0 0 30px rgba(0,212,170,0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
+</style>
+
+<script>
+function toggle(el){
+  const content=el.nextElementSibling;
+  const isCollapsed=content.classList.contains('collapsed');
+  content.classList.toggle('collapsed');
+  el.querySelector('.section-toggle').textContent=isCollapsed?'▾':'▸';
+}
+// Sections: 默认展开，点击可折叠
+// 如需默认折叠，在对应 section-content 上加 class="collapsed"
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>798 平台AI运维助手</title>
+<link rel="icon" href="favicon.ico">
+<!-- 1. base.css（必须在第一位） -->
+<link rel="stylesheet" href="agent-card-base.css">
+<style>
+/* CSS 变量（798 主题色：科技青绿） */
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary: #C0392B;--glow:rgba(0,212,170,0.4);
   --accent: #00D4AA;--accent2: #00D4AA;--accent-rgb:0,212,170;
   --good:#9ECE6A;--bad:#F7768E;--cyan:#7DCFFF;
 }
@@ -257,15 +550,7 @@ ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
 <div class="footer">🐙 798 · 平台AI运维助手 · Hermes Agent Skills</div>
 
 <!-- 2. base.css 覆盖块（在 body 闭合前，确保最高优先级） -->
-<style>
-/* INLINE avatar CSS - overrides base.css, no cache issues */
-/* 正确值（base.css 实际值：avatar-wrap 200×260，avatar-img 180×240，avatar-ring inset:0 撑满 wrap） */
-.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
-.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#00D4AA)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
-.avatar-img{width:180px!important;height:240px!important;border-radius:12px!important;border:3px solid var(--accent2,#00D4AA)!important;box-shadow:0 0 30px rgba(0,212,170,0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
-@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
-.avatar{border-radius:12px!important;width:100%!important;height:100%!important;object-fit:cover!important}
-</style>
+
 
 <script>
 function toggle(el){
