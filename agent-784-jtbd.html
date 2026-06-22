@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>784 JTBD 侦探 — 需求翻译官</title>
+<link rel="stylesheet" href="agent-card-base.css?v=1782013118">
+<style>
+
+:root{
+  --bg:#1A1B26;--bg2:#16161E;--bg3:#1f2335;--bg-highlight:#24283B;
+  --border:#2f3549;--text-main:#C0CAF5;--text-dim:#565f89;
+  --primary: #2AC8DE;--glow:rgba(42,200,222,0.4);--accent: #2AC8DE;--accent2: #2AC8DE;--accent-rgb:42,200,222;
+  --good:#9ECE6A;--warn:#E0AF68;--bad:#F7768E;--cyan:#7DCFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;padding:2rem}
+
+/* Particles */
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.7}}
+
+.wiki-bubbles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.bubble{position:absolute;border-radius:50%;border:1px solid var(--primary);opacity:0.2;animation:float-bubble var(--dur,10s) infinite ease-in-out}
+@keyframes float-bubble{0%{transform:translateY(100vh) scale(0.8);opacity:0}20%{opacity:0.3}80%{opacity:0.3}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+
+.distill-drops{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.drop{position:absolute;width:3px;height:3px;background:var(--primary);border-radius:50%;opacity:0.3;animation:fall-drop var(--dur,6s) infinite linear}
+@keyframes fall-drop{0%{transform:translateY(-10vh);opacity:0}10%{opacity:0.4}90%{opacity:0.4}100%{transform:translateY(100vh);opacity:0}}
+
+.signal-waves{position:fixed;top:50%;left:50%;width:0;height:0;pointer-events:none;z-index:0}
+.wave{position:absolute;border-radius:50%;border:1px solid var(--primary);opacity:0;transform:translate(-50%,-50%);animation:ping 3s infinite ease-out}
+@keyframes ping{0%{width:0;height:0;opacity:0.6}100%{width:200px;height:200px;opacity:0}}
+
+.gear-spark{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.spark{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0;animation:spark-flicker 2s infinite ease-in-out}
+@keyframes spark-flicker{0%,100%{opacity:0}50%{opacity:0.8}}
+
+.loop-circles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.loop{position:absolute;border-radius:50%;border:1px solid var(--primary);opacity:0.15;animation:pulse-ring var(--dur,8s) infinite ease-out}
+@keyframes pulse-ring{0%{width:0;height:0;opacity:0.4}100%{width:300px;height:300px;opacity:0}}
+
+.rag-dots{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.rdot{position:absolute;width:3px;height:3px;background:var(--primary);border-radius:50%;opacity:0.3;animation:float-rdot var(--dur,12s) infinite ease-in-out}
+@keyframes float-rdot{0%{transform:translateY(0) rotate(0deg);opacity:0.2}50%{transform:translateY(-30px) rotate(180deg);opacity:0.5}100%{transform:translateY(0) rotate(360deg);opacity:0.2}}
+
+.code-rain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.rain-char{position:absolute;font-family:monospace;font-size:10px;color:var(--primary);opacity:0.2;animation:code-fall var(--dur,8s) infinite linear}
+@keyframes code-fall{0%{transform:translateY(-20px);opacity:0}10%{opacity:0.3}90%{opacity:0.3}100%{transform:translateY(100vh);opacity:0}}
+
+.sparkles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.sparkle{position:absolute;width:4px;height:4px;background:var(--primary);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);opacity:0.3;animation:sparkle-twinkle 2s infinite ease-in-out}
+@keyframes sparkle-twinkle{0%,100%{opacity:0.1;transform:scale(0.8)}50%{opacity:0.6;transform:scale(1.2)}}
+
+.doc-scroll{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.doc-line{position:absolute;width:1px;background:linear-gradient(to bottom,transparent,var(--primary),transparent);opacity:0.2;animation:scroll-doc var(--dur,10s) infinite linear}
+@keyframes scroll-doc{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+
+.waves{position:fixed;bottom:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.wave-line{position:absolute;width:100%;height:1px;background:var(--primary);opacity:0.15;animation:wave-drift var(--dur,6s) infinite ease-in-out}
+@keyframes wave-drift{0%,100%{transform:translateX(-10%)}50%{transform:translateX(10%)}}
+
+.note-flutter{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.note{position:absolute;font-size:1rem;opacity:0.3;animation:flutter var(--dur,8s) infinite ease-in-out}
+@keyframes flutter{0%{transform:translateY(0) rotate(0deg);opacity:0.2}50%{transform:translateY(-40px) rotate(15deg);opacity:0.5}100%{transform:translateY(0) rotate(0deg);opacity:0.2}}
+
+/* Layout */
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem;position:relative;overflow:hidde
+n}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(42,200,222,0.08) 0%,transparent 60%);pointer-events:none}
+.hero-text{flex:1;position:relative;z-index:2}
+.hero h1{font-size:1.8rem;font-weight:700;color:var(--primary);text-shadow:0 0 20px var(--glow)}
+.badge-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem}
+.badge{display:inline-block;background:var(--bg3);border:1px solid var(--primary);color:var(--primary);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:20px}
+.subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.6rem}
+.desc{font-size:0.9rem;color:var(--text-main);line-height:1.7;margin-bottom:0.8rem}
+.keywords{display:flex;gap:0.5rem;flex-wrap:wrap}
+.keyword{display:inline-block;background:var(--bg3);border:1px solid var(--primary);color:var(--primary);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:20px}
+.deco-row{display:flex;align-items:flex-end;gap:0.5rem;margin-top:0.8rem}
+.deco-row span{font-size:1.4rem;animation:bounce-grove 2s infinite ease-in-out}
+.deco-row span:nth-child(1){animation-delay:0s}
+.deco-row span:nth-child(2){animation-delay:0.3s}
+.deco-row span:nth-child(3){animation-delay:0.6s}
+@keyframes bounce-grove{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 15px var(--glow)}50%{box-shadow:0 0 35px var(--glow)}}
+
+/* Sections */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;animation:slide-up 0.4s ease-out backwards}
+.section:nth-child(2){animation-delay:0.05s}.section:nth-child(3){animation-delay:0.1s}.section:nth-child(4){animation-delay:0.15s}.section:nth-child(5){animation-delay:0.2s}.section:nth-child(6){animation-delay:0.25s}.section:nth-child(7){animation-delay:0.3s}.section:nth-child(8){animation-delay:0.35s}.section:nth-child(9){animation-delay:0.4s}.section:nth-child(10){animation-delay:0.45s}.section:nth-child(11){animation-delay:0.5s}.section:nth-child(12){animation-delay:0.55s}
+@keyframes slide-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none;transition:background 0.2s}
+.section-header:hover{background:var(--bg-highlight)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main);letter-spacing:0.03em}
+.section-toggle{font-size:0.75rem;color:var(--text-dim)}
+.section-content{padding:0.75rem 1rem}
+
+.who-text{font-size:0.95rem;line-height:1.7}.who-text strong{color:var(--primary)}
+.traits{display:flex;flex-direction:column;gap:0.5rem}
+.trait{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.trait-icon{font-size:1rem;width:20px;text-align:center}.trait b{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.redlines{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+.redline{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-dim)}
+.redline-icon{color:var(--bad)}
+.speech-box{background:var(--bg);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap}
+.speech-dos{border-left:3px solid var(--good);color:var(--good)}
+.speech-donts{border-left:3px solid var(--bad);color:var(--text-dim);text-decoration:line-through}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.5rem;font-size:0.78rem;color:var(--primary);display:inline-block}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.delivery-pre{background:var(--bg);border-radius:8px;padding:0.75rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap;border-left:3px solid var(--primary)}
+.gallery-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.75rem}
+.gallery-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center;font-size:0.75rem}
+.gallery-item img{width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:0.4rem;border:2px solid var(--primary)}
+.gallery-item strong{display:block;color:var(--primary);margin-bottom:0.15rem;font-size:0.72rem}
+.gallery-item span{color:var(--text-dim)}
+.gallery-item.current{border-color:var(--primary);box-shadow:0 0 12px var(--glow)}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{b
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,2AC8DE)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:200px!important;height:260px!important;border-radius:12px!important;border:3px solid var(--accent2,2AC8DE)!important;box-shadow:0 0 30px rgba(42,200,222,0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+@keyframes grow-in{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+ackground:var(--border);border-radius:3px}
+
+
+.avatar{border-radius:12px!important;width:200px!important;height:260px!important;object-fit:cover!important}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring" data-ring="scan"></div>
+      <img class="avatar-img" src="agent-784-avatar.jpg" alt="avatar" >
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🦉 784 · JTBD 侦探</span></div>
+      <h1>需求翻译官</h1>
+      <div class="subtitle">穿透表象 · 直击进展</div>
+      <p class="desc">
+        把模糊需求翻译成清晰的一句话。当用户说想要什么功能，我帮他们找到真正想完成的进展。
+      </p>
+      <div class="keywords">
+        <span class="keyword">🦉 穿透表象</span>
+        <span class="keyword">📋 结构化</span>
+        <span class="keyword">🔍 进展导向</span>
+        <span class="keyword">💡 需求翻译</span>
+      </div>
+      <div class="deco-row">
+        <span>🦉</span><span>🔍</span><span>💡</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 1: 角色灵魂 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🦉</div>
+      <div class="section-title">一、角色灵魂</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text">
+        把模糊需求翻译成<strong>JTBD一句话</strong>。<br>
+        我不直接给功能建议——我帮用户找到真正想完成的进展，然后才讨论怎么实现。
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: 行为准则 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎭</div>
+      <div class="section-title">二、行为准则</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="traits">
+        <div class="trait"><span class="trait-icon">🔍</span> <b>追问穿透</b>：连续追问直到找到真正的进展</div>
+        <div class="trait"><span class="trait-icon">🔄</span> <b>优先替代方案</b>：先问现有方案，不直接给新功能</div>
+        <div class="trait"><span class="trait-icon">📊</span> <b>三层穿透</b>：功能层 → 情绪层 → 社会层</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: JTBD 公式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📐</div>
+      <div class="section-title">三、JTBD 公式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="formula-box">
+当 <em>[场景]</em> 时<br>
+我想要 <em>[进展]</em><br>
+以便 <em>[深层目标]</em><br>
+现在只能靠 <em>[替代方案]</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: 触发方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">⚡</div>
+      <div class="section-title">四、触发方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <code class="trigger-code">784</code>
+        <code class="trigger-code">JTBD</code>
+        <code class="trigger-code">需求分析</code>
+        <code class="trigger-code">想要什么</code>
+        <code class="trigger-code">用户真正想</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: 我的红线 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🚫</div>
+      <div class="section-title">五、我的红线</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="redlines">
+        <div class="redline"><span class="redline-icon">✗</span>未理解场景不给功能建议</div>
+        <div class="redline"><span class="redline-icon">✗</span>不做泛化用户画像</div>
+        <div class="redline"><span class="redline-icon">✗</span>不跳过替代方案询问</div>
+        <div class="redline"><span class="redline-icon">✗</span>不直接给解决方案</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: 交付格式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📤</div>
+      <div class="section-title">六、交付格式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="delivery-pre">📝 JTBD句子：一句话描述真正进展
+📊 三层表格：功能层 / 情绪层 / 社会层
+❓ 5个筛选问题：验证需求真伪</div>
+    </div>
+  </div>
+
+  <!-- Section 7: 关联技能 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🔗</div>
+      <div class="section-title">七、关联技能</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="cats-grid">
+        <div class="cat-item"><strong>560</strong><span>需求挖掘</span></div>
+        <div class="cat-item"><strong>784</strong><span>JTBD翻译</span></div>
+        <div class="cat-item"><strong>690</strong><span>方案设计</span></div>
+        <div class="cat-item"><strong>720</strong><span>界面实现</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    🦉 784 JTBD 侦探 · 需求翻译官 · 📡 扫描线 · <span id="ts"></span>
+  </div>
+
+<script>
+  function toggleSection(header){
+    header.parentElement.classList.toggle('collapsed');
+  }
+  function tick(){
+    const now=new Date(), pad=n=>String(n).padStart(2,'0');
+    document.getElementById('ts').textContent=
+      `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  }
+  tick(); setInterval(tick,1000);
+</script>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const isOpen=!body.style.display||body.style.display!=='none';
+  body.style.display=isOpen?'none':'';
+  header.querySelector('.section-toggle').textContent=isOpen?'▶':'▼';
+}
+const el=document.getElementById('stars');for(let i=0;i<60;i++){const e=document.createElement('div');e.className='star';e.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s`;el.appendChild(e);}
+function tick(){const now=new Date(),pad=n=>String(n).padStart(2,'0');document.getElementById('ts').textContent=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;}
+tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
