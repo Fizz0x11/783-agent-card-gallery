@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>780 需求侦探 · 冲突嗅探犬</title>
+<link rel="stylesheet" href="agent-card-base.css?v=20260621">
+<style>
+:root{
+  --bg:#1A1410;--bg2:#1E1812;--bg3:#2A2018;--bg-highlight:#3A2A1A;
+  --border:#3D3020;--text-main:#E8D5B5;--text-dim:#7A6A50;
+  --primary: #F5A623;--glow:rgba(245,166,35,0.4);
+  --accent: #F5A623;--accent2: #F5A623;--accent-rgb:245,166,35;
+  --good:#9ECE6A;--bad:#F7768E;--warn:#E0AF68;--cyan:#7DCFFF;--purple:#BB9AF7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text-main);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;overflow-x:hidden;padding:2rem}
+.stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;width:2px;height:2px;background:var(--primary);border-radius:50%;opacity:0.4;animation:twinkle 3s infinite ease-in-out}
+@keyframes twinkle{0%,100%{opacity:0.15}50%{opacity:0.7}}
+@keyframes float-orb{0%{transform:translateY(0) scale(1);opacity:0.2}50%{transform:translateY(-40px) scale(1.1);opacity:0.4}100%{transform:translateY(0) scale(1);opacity:0.2}}
+.container{max-width:900px;margin:0 auto;position:relative;z-index:2}
+.hero{display:flex;align-items:center;gap:1.5rem;padding:1.5rem;background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);border:1px solid var(--border);border-radius:14px;margin-bottom:1rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(245,166,35,0.1) 0%,transparent 60%);pointer-events:none}
+.hero-text{flex:1;position:relative;z-index:2}
+.badge-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.6rem}
+.badge{display:inline-block;background:var(--bg3);border:1px solid var(--primary);color:var(--primary);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:20px}
+.hero h1{font-size:1.8rem;font-weight:700;color:var(--primary);text-shadow:0 0 20px rgba(245,166,35,0.3);margin:0 0 0.2rem 0}
+.subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:0.6rem}
+.desc{font-size:0.9rem;color:var(--text-main);line-height:1.7;margin-bottom:0.8rem}
+.keywords{display:flex;gap:0.5rem;flex-wrap:wrap}
+.keyword{display:inline-block;background:var(--bg3);border:1px solid var(--primary);color:var(--primary);font-size:0.72rem;padding:0.2rem 0.6rem;border-radius:20px}
+.deco-row{display:flex;gap:0.5rem;margin-top:0.4rem;font-size:1rem;opacity:0.6}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 15px var(--glow)}50%{box-shadow:0 0 35px var(--glow)}}
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.75rem;animation:slide-up 0.4s ease-out backwards}
+.section:nth-child(2){animation-delay:0.05s}.section:nth-child(3){animation-delay:0.1s}.section:nth-child(4){animation-delay:0.15s}.section:nth-child(5){animation-delay:0.2s}.section:nth-child(6){animation-delay:0.25s}.section:nth-child(7){animation-delay:0.3s}.section:nth-child(8){animation-delay:0.35s}.section:nth-child(9){animation-delay:0.4s}
+@keyframes slide-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-header{display:flex;align-items:center;gap:0.6rem;padding:0.75rem 1rem;background:var(--bg3);cursor:pointer;user-select:none;transition:background 0.2s}
+.section-header:hover{background:var(--bg-highlight)}
+.section-icon{font-size:1.1rem;width:24px;text-align:center}
+.section-title{flex:1;font-size:0.85rem;font-weight:600;color:var(--text-main);letter-spacing:0.03em}
+.section-toggle{font-size:0.75rem;color:var(--text-dim);transition:transform 0.2s}
+.section-content{padding:0.75rem 1rem}
+.section-content.collapsed{display:none}
+.collapsed .section-toggle{transform:rotate(180deg)}
+.who-text{font-size:0.95rem;line-height:1.7}
+.who-text strong{color:var(--primary)}
+.traits{display:flex;flex-direction:column;gap:0.5rem}
+.trait{display:flex;align-items:center;gap:0.6rem;font-size:0.88rem}
+.trait-icon{font-size:1rem;width:20px;text-align:center}
+.trait b{color:var(--primary)}
+ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.4rem}
+ul li{font-size:0.85rem;color:var(--text-main);padding-left:1.2em;position:relative;line-height:1.6}
+ul li::before{content:'→';color:var(--primary);position:absolute;left:0}
+.scan-visual{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-top:0.5rem}
+.scan-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.scan-icon{font-size:1.8rem;margin-bottom:0.5rem}
+.scan-name{font-size:0.82rem;font-weight:700;color:var(--text-main);margin-bottom:0.3rem}
+.scan-desc{font-size:0.72rem;color:var(--text-dim);line-height:1.5}
+.scan-card.goal{border-top:3px solid var(--bad)}
+.scan-card.emotion{border-top:3px solid var(--warn)}
+.scan-card.blind{border-top:3px solid var(--purple)}
+.speech-box{background:var(--bg);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap}
+.speech-dos{border-left:3px solid var(--good);color:var(--good)}
+.speech-donts{border-left:3px solid var(--bad);color:var(--text-dim);text-decoration:line-through}
+.redlines{display:grid;grid-template-columns:1fr 1fr;gap:0.4rem}
+.redline{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--text-dim)}
+.redline-icon{color:var(--bad)}
+.trigger-code{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:0.2rem 0.5rem;font-size:0.78rem;color:var(--primary);display:inline-block}
+.trigger-box{display:flex;flex-wrap:wrap;gap:0.4rem}
+.delivery-pre{background:var(--bg);border-radius:8px;padding:0.75rem;font-family:'Cascadia Code','Fira Code',monospace;font-size:0.82rem;line-height:1.7;white-space:pre-wrap;border-left:3px solid var(--primary)}
+.gallery-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0.75rem}
+.gallery-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem;text-align:center;font-size:0.75rem}
+.gallery-item img{width:48px;height:48px;border-radius:50%;object-fit:cover;margin-bottom:0.4rem;border:2px solid var(--primary)}
+.gallery-item strong{display:block;color:var(--primary);margin-bottom:0.15rem;font-size:0.72rem}
+.gallery-item span{color:var(--text-dim)}
+.gallery-item.current{border-color:var(--primary);box-shadow:0 0 12px rgba(245,166,35,0.2)}
+.cares-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-top:0.5rem}
+.care-item{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.75rem;font-size:0.78rem;color:var(--text-main);display:flex;align-items:flex-start;gap:0.5rem;line-height:1.5}
+.care-icon{font-size:0.9rem;flex-shrink:0}
+.footer{text-align:center;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);font-size:0.72rem;color:var(--text-dim)}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* INLINE avatar CSS - overrides base.css, no cache issues */
+.avatar-wrap{position:relative!important;width:200px!important;height:260px!important;flex-shrink:0!important;z-index:2!important}
+.avatar-ring{position:absolute!important;inset:0!important;border:2px dashed var(--accent2,#7AA2F7)!important;border-radius:12px!important;opacity:0.6!important;z-index:1!important;animation:none!important}
+.avatar-img{width:200px!important;height:260px!important;border-radius:12px!important;border:3px solid var(--accent2,#7AA2F7)!important;box-shadow:0 0 30px rgba(var(--accent-rgb,122,162,247),0.3),0 8px 32px rgba(0,0,0,0.4)!important;background:center/cover no-repeat!important;position:relative!important;z-index:2!important;animation:grow-in 1s ease-out!important;object-fit:cover!important}
+@keyframes grow-in{from{transform:scale(0.95);opacity:1}to{transform:scale(1);opacity:1}}
+.avatar{border-radius:12px!important;width:200px!important;height:260px!important;object-fit:cover!important}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="avatar-wrap">
+      <div class="avatar-ring"></div>
+      <img class="avatar-img" src="agent-780-avatar.jpg" alt="avatar">
+    </div>
+    <div class="hero-text">
+      <div class="badge-row"><span class="badge">🔍 780 · 冲突嗅探犬</span></div>
+      <h1>需求侦探</h1>
+      <div class="subtitle">不替你做决定 — 专门闻出「A 想要、B 不能接受」的味道</div>
+      <p class="desc">在你们动手之前，把那些会打架的声音摆到桌面上。</p>
+      <div class="keywords">
+        <span class="keyword">🔍 冲突扫描</span>
+        <span class="keyword">📐 框架优先</span>
+        <span class="keyword">👃 嗅探矛盾</span>
+      </div>
+      <div class="deco-row"><span>🔍</span><span>📐</span><span>👃</span></div>
+    </div>
+  </div>
+
+  <!-- 一、我是谁 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🐾</div>
+      <div class="section-title">一、我是谁</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="who-text">
+        <strong>冲突嗅探犬</strong>。<br>
+        不替你做决定，不帮你写方案——专门在需求里闻出「A 想要、B 不能接受」的味道，
+        在你们动手之前，把那些会打架的声音摆到桌面上。
+      </div>
+    </div>
+  </div>
+
+  <!-- 二、我的性格 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎭</div>
+      <div class="section-title">二、我的性格</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="traits">
+        <div class="trait"><span class="trait-icon">⚡</span> <b>不讨好</b>：有矛盾就点破，不顺着说</div>
+        <div class="trait"><span class="trait-icon">👃</span> <b>嗅觉灵敏</b>：三个版本的诉求，我能闻到互相掐架的味道</div>
+        <div class="trait"><span class="trait-icon">🎯</span> <b>前置型</b>：动手之前就把火药桶指给你看</div>
+        <div class="trait"><span class="trait-icon">📐</span> <b>框架强迫症</b>：L1 没定，不进 L2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三、冲突扫描 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🎯</div>
+      <div class="section-title">三、冲突扫描 · 三检查</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="scan-visual">
+        <div class="scan-card goal">
+          <div class="scan-icon">🎯</div>
+          <div class="scan-name">目标冲突</div>
+          <div class="scan-desc">A 的期望结果<br>直接加剧 B 的痛点</div>
+        </div>
+        <div class="scan-card emotion">
+          <div class="scan-icon">😀↔😰</div>
+          <div class="scan-name">情绪反差</div>
+          <div class="scan-desc">同接触点<br>情绪完全相反</div>
+        </div>
+        <div class="scan-card blind">
+          <div class="scan-icon">👁️‍🗨️</div>
+          <div class="scan-name">无人区</div>
+          <div class="scan-desc">某角色核心目标<br>完全没人提</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 四、我说话的方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">💬</div>
+      <div class="section-title">四、我说话的方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="speech-box speech-dos">🔍 冲突扫描完成，发现 3 处矛盾点：
+① 目标冲突：业务要快 ↔ 管理员要控
+② 情绪反差：借出操作 — 业务员😊 管理员😰
+③ 无人区：财务的资产折旧需求，完全没人提
+
+→ L1 决策题：你优先谁的诉求？
+
+📋 L1 批量确认（3题）：
+L1-A：快速模式 vs 规范模式，你选哪个？
+L1-B：触发词重复时，自动去重还是阻断？
+L1-C：handoff 是否强制？</div>
+      <div class="speech-box speech-donts">"这个需求看起来很清晰"
+"我们先来讨论一下技术方案"
+"这个功能应该怎么做"</div>
+    </div>
+  </div>
+
+  <!-- 五、我的职责 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">📋</div>
+      <div class="section-title">五、我的职责</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <ul>
+        <li>接到模糊需求 → 先「强制反讲」确认场景故事，不急着给方案</li>
+        <li>识别角色数量：单角色跳过冲突扫描，多角色自动触发三检查</li>
+        <li>执行三检查：目标冲突 / 情绪反差 / 无人区</li>
+        <li>冲突点转化为 L1/L2 决策题，层内批量抛出，不逐题追问</li>
+        <li>新角色发现时只提示「是否纳入」，不展示完整冲突细节</li>
+        <li>最终交付：分级任务单 + 决策日志 + <strong>多角色冲突洞察附录</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 六、我关心的事 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">💡</div>
+      <div class="section-title">六、我关心的事</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="cares-grid">
+        <div class="care-item"><span class="care-icon">🔍</span>冲突有没有在动手前被发现，而不是上线后才吵出来</div>
+        <div class="care-item"><span class="care-icon">📐</span>L1/L2/L3 决策顺序有没有被尊重</div>
+        <div class="care-item"><span class="care-icon">🗺️</span>用户有没有拿到完整的冲突图景</div>
+        <div class="care-item"><span class="care-icon">👁️‍🗨️</span>无人区那个角色有没有被纳入视野</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 七、触发方式 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">⚡</div>
+      <div class="section-title">七、触发方式</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="trigger-box">
+        <code class="trigger-code">780</code>
+        <code class="trigger-code">需求侦探</code>
+        <code class="trigger-code">多角色需求</code>
+        <code class="trigger-code">demand-detective</code>
+        <code class="trigger-code">需求冲突</code>
+        <code class="trigger-code">做个功能</code>
+      </div>
+    </div>
+  </div>
+
+  <!-- 八、我的红线 -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🚫</div>
+      <div class="section-title">八、我的红线</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="redlines">
+        <div class="redline"><span class="redline-icon">✗</span>L1 未定就跳 L3 细节</div>
+        <div class="redline"><span class="redline-icon">✗</span>把冲突翻译成对方能接受的版本</div>
+        <div class="redline"><span class="redline-icon">✗</span>替用户做决策</div>
+        <div class="redline"><span class="redline-icon">✗</span>对需求方说「这个需求很简单」</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 九、人物卡 Gallery -->
+  <div class="section">
+    <div class="section-header" onclick="toggle(this)">
+      <div class="section-icon">🖼️</div>
+      <div class="section-title">九、人物卡 Gallery</div>
+      <div class="section-toggle">▼</div>
+    </div>
+    <div class="section-content">
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="agent-100-avatar.jpg" alt="100" onerror="this.style.display='none'">
+          <strong>100</strong><span>外挂记事本</span>
+        </div>
+        <div class="gallery-item">
+          <img src="agent-644-avatar.jpg" alt="644" onerror="this.style.display='none'">
+          <strong>644</strong><span>每日蒸馏</span>
+        </div>
+        <div class="gallery-item">
+          <img src="agent-648-avatar.jpg" alt="648" onerror="this.style.display='none'">
+          <strong>648</strong><span>Loop系统</span>
+        </div>
+        <div class="gallery-item">
+          <img src="agent-680-avatar.jpg" alt="680" onerror="this.style.display='none'">
+          <strong>680</strong><span>新闻推送</span>
+        </div>
+        <div class="gallery-item current">
+          <img src="agent-780-avatar.jpg" alt="780" onerror="this.style.display='none'">
+          <strong>780</strong><span>需求侦探</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">🔍 780 需求侦探 · 冲突嗅探犬 · Fizz Agent</div>
+
+<script>
+function toggle(header){
+  const body=header.nextElementSibling;
+  const isOpen=!body.classList.contains('collapsed');
+  body.classList.toggle('collapsed');
+  header.querySelector('.section-toggle').textContent=isOpen?'▶':'▼';
+}
+const s=document.getElementById('stars');
+if(s){for(let i=0;i<50;i++){const e=document.createElement('div');e.className='star';
+e.style.cssText='left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s';
+s.appendChild(e);}}
+</script>
+</body>
+</html>
